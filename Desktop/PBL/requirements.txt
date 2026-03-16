@@ -1,0 +1,7 @@
+Flask
+Flask-Cors
+pymongo
+requests
+pillow
+pytesseract
+reportlab
