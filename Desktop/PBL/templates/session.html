@@ -1,67 +1,45 @@
 {% extends 'base.html' %}
-{% block title %}Session Management - Skillify{% endblock %}
+{% block title %}Session Overview - Skillify{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <h3 class="fw-bold text-primary">Manage Sessions</h3>
-    </div>
-</div>
-
-<div class="row">
-    <!-- incoming requests -->
-    <div class="col-md-6 mb-4">
-        <div class="card p-0 h-100">
-            <div class="card-header bg-white p-4 border-0">
-                <h5 class="fw-bold mb-0">Pending Session Requests</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item p-4">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="fw-bold mb-1">Request from Bob</h6>
-                            <p class="text-muted mb-2 text-sm">"I need help setting up my Python environment for web dev."</p>
-                            <span class="badge bg-light text-dark">Topic: Python</span>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <button class="btn btn-sm btn-success px-3">Accept</button>
-                            <button class="btn btn-sm btn-outline-danger px-3">Reject</button>
-                        </div>
-                    </div>
-                </li>
-                 <li class="list-group-item p-4 text-center text-muted">
-                    No more pending requests.
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- active sessions -->
-    <div class="col-md-6 mb-4">
-        <div class="card p-0 h-100">
-            <div class="card-header bg-white p-4 border-0">
-                <h5 class="fw-bold mb-0">Active Sessions</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h6 class="fw-bold mb-1 text-primary">Machine Learning Basics</h6>
-                            <p class="text-muted mb-0">Partner: Alice W.</p>
-                        </div>
-                        <span class="badge bg-warning text-dark px-2 py-1">In Progress</span>
-                    </div>
-                    <div class="bg-light p-3 rounded mb-3">
-                        <small class="d-block mb-1 text-muted">Meeting Link:</small>
-                        <a href="#" class="d-block text-truncate">https://meet.skillify.local/abc-xyz-def</a>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <button class="btn btn-outline-secondary btn-sm">Message</button>
-                        <!-- Goes to feedback on complete -->
-                        <a href="/feedback" class="btn btn-primary btn-sm">Mark Completed</a>
-                    </div>
-                </li>
-            </ul>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-4 text-primary">Skill Session #{{ session_data._id }}</h2>
+        
+        <div class="card shadow-sm p-4 mb-4">
+            <h4 class="fw-bold">Status: <span class="badge bg-secondary">{{ session_data.status | title }}</span></h4>
+            <hr>
+            <p><strong>Scheduled For:</strong> {{ session_data.scheduled_at }}</p>
+            <p><strong>Created On:</strong> {{ session_data.created_at }}</p>
+            
+            {% if session_data.status == 'pending' %}
+                <div class="alert alert-warning mt-3">Waiting for Mentor to accept the request.</div>
+                {% if current_user.user_id == session_data.provider_id %}
+                    <form action="/sessions/{{ session_data._id }}/accept" method="POST">
+                        <button type="submit" class="btn btn-success">Accept Session</button>
+                    </form>
+                {% endif %}
+                
+            {% elif session_data.status == 'accepted' %}
+                <div class="alert alert-info mt-3">Session is active. Have your meeting and mark as complete afterwards!</div>
+                <form action="/sessions/{{ session_data._id }}/complete" method="POST">
+                    <button type="submit" class="btn btn-primary w-100">Mark as Completed</button>
+                </form>
+                
+            {% elif session_data.status == 'completed' %}
+                <div class="alert alert-success mt-3">This session was successfully completed on {{ session_data.completed_at }}!</div>
+                
+                {% if current_user.user_id == session_data.requester_id and not session_data.feedback_given %}
+                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-warning w-100">Leave Feedback for Mentor</a>
+                {% elif session_data.feedback_given and not session_data.certificate_issued %}
+                    <!-- If feedback given, allow cert gen -->
+                    <form action="/certificates/generate/{{ session_data._id }}" method="POST">
+                        <button type="submit" class="btn btn-dark w-100">Generate Completion Certificate</button>
+                    </form>
+                {% elif session_data.certificate_issued %}
+                    <a class="btn btn-outline-dark w-100 disabled">Certificate Already Issued</a>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>

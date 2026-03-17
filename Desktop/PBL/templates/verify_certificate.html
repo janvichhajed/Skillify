@@ -2,35 +2,51 @@
 {% block title %}Verify Certificate - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card p-5 shadow-sm text-center">
-            <div class="mb-4">
-                <span class="display-3">🔍</span>
-            </div>
-            <h3 class="fw-bold text-primary mb-3">Verify a Certificate</h3>
-            <p class="text-muted mb-4">Enter the unique Skillify Certificate ID below to confirm its authenticity and check the details.</p>
-            
-            <form>
-                <div class="mb-4">
-                    <input type="text" class="form-control form-control-lg text-center fw-bold" placeholder="e.g., SKL-123456" style="letter-spacing: 2px;" required>
-                </div>
-                <!-- Simulating a visual toggle for demonstration purposes -->
-                <button type="button" class="btn btn-primary btn-lg w-100 text-uppercase fw-bold" onclick="document.getElementById('result').classList.remove('d-none')">Verify Now</button>
-            </form>
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center mb-5">
+        <h2 class="fw-bold text-primary">Verify a Certificate</h2>
+        <p class="text-muted">Enter the unique Credential ID found on the certificate to check its authenticity on the Skillify network.</p>
+    </div>
+</div>
 
-            <!-- Result Box (Hidden by default, shown upon user interaction) -->
-            <div id="result" class="alert alert-success mt-4 d-none text-start shadow-sm">
-                <div class="d-flex align-items-center mb-2">
-                    <span class="fs-4 me-2">✅</span>
-                    <h5 class="alert-heading fw-bold mb-0">Certificate is Valid!</h5>
+<div class="row justify-content-center">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow p-4">
+            <form action="/certificates/verify" method="POST">
+                <div class="input-group input-group-lg mb-3">
+                    <input type="text" name="certificate_id" class="form-control bg-light" placeholder="e.g. 9B2X-47A1-C119" required>
+                    <button class="btn btn-primary" type="submit">Verify Now</button>
                 </div>
-                <hr>
-                <p class="mb-1"><strong>Issued to:</strong> John Doe</p>
-                <p class="mb-1"><strong>Skill:</strong> Advanced Python Programming</p>
-                <p class="mb-0"><strong>Issue Date:</strong> October 24, 2023</p>
-            </div>
+            </form>
         </div>
     </div>
 </div>
+
+{% if result %}
+<div class="row justify-content-center mt-2">
+    <div class="col-md-6">
+        {% if result == "Valid Certificate" %}
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <div>
+                    <h4 class="alert-heading fw-bold mb-1">Authentic Certificate! ✅</h4>
+                    <p class="mb-0">This certificate is officially registered in our system and confirmed as valid.</p>
+                </div>
+            </div>
+            
+            <div class="card mt-3 border-success text-center py-4">
+                <h6 class="text-muted text-uppercase mb-1">Credential Data</h6>
+                <h3 class="fw-bold mb-3">{{ cert_data.certificate_id }}</h3>
+                <p class="mb-1"><strong>Issued Date:</strong> {{ cert_data.issue_date }}</p>
+            </div>
+        {% else %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>
+                    <h4 class="alert-heading fw-bold mb-1">Invalid Certificate ❌</h4>
+                    <p class="mb-0">We could not find any record of this credential ID. The certificate may be fraudulent or mistyped.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}

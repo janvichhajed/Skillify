@@ -1,21 +1,31 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, session, redirect
+from database.db import skills, users
+from models.skill_model import Skill
 
 skill_bp = Blueprint("skill", __name__, url_prefix="/skills")
 
-@skill_bp.route("/", methods=["GET", "POST"])
-def manage_skills():
-    if request.method == "POST":
-        # Add a new skill logic
-        return jsonify({"message": "Skill added successfully"}), 201
-        
-    # Get list of skills
-    return render_template("browse_skills.html")
+@skill_bp.route("/", methods=["GET"])
+def browse_skills():
+    all_skills = list(skills.find())
+    return render_template("browse_skills.html", skills=all_skills, current_user=session)
 
-@skill_bp.route("/<skill_id>", methods=["GET", "PUT", "DELETE"])
-def skill_detail(skill_id):
-    if request.method == "GET":
-        return jsonify({"message": f"Details for skill {skill_id}"})
-    elif request.method == "PUT":
-        return jsonify({"message": f"Updated skill {skill_id}"})
-    else:
-        return jsonify({"message": f"Deleted skill {skill_id}"})
+@skill_bp.route("/post", methods=["GET", "POST"])
+def post_skill():
+    if "user_id" not in session:
+        return redirect("/auth/login")
+        
+    # Check if mentor
+    user = users.find_one({"_id": session["user_id"]})
+    # Optional logic: only verified mentors can post skills
+    
+    if request.method == "POST":
+        title = request.form.get("title")
+        description = request.form.get("description")
+        category = request.form.get("category")
+        proficiency = request.form.get("proficiency")
+        
+        new_skill = Skill(session["user_id"], title, description, category, proficiency)
+        skills.insert_one(new_skill.to_dict())
+        return redirect("/skills")
+        
+    return render_template("post_skill.html", current_user=session)

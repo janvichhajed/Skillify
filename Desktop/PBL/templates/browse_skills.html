@@ -3,93 +3,56 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold text-primary">Find Mentors & Skills</h3>
+    <h2 class="fw-bold text-primary">Browse Peer Skills</h2>
+    {% if current_user %}
+        <a href="/skills/post" class="btn btn-primary">Post a Skill</a>
+    {% endif %}
 </div>
 
-<!-- Filters -->
-<div class="card p-3 mb-4 shadow-sm">
-    <div class="row g-2 align-items-center">
-        <div class="col-md-5">
-            <input type="text" class="form-control" placeholder="Search for skills (e.g., Python, React)...">
-        </div>
-        <div class="col-md-3">
-            <select class="form-select">
-                <option value="">All Categories</option>
-                <option>Programming</option>
-                <option>Design</option>
-                <option>Business</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select">
-                <option value="">Any Rating</option>
-                <option>4+ Stars</option>
-                <option>5 Stars</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary w-100">Search</button>
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for Python, Design, Math...">
+            <button class="btn btn-outline-primary" type="button">Search</button>
         </div>
     </div>
 </div>
 
-<!-- Mentor List -->
 <div class="row">
-    <!-- Mentor Card 1 -->
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card h-100 p-4 mentor-card">
-            <div class="d-flex align-items-center mb-3">
-                <img src="https://ui-avatars.com/api/?name=Alice+Wang&size=56&background=random" class="rounded-circle me-3" alt="Avatar">
-                <div>
-                    <h5 class="mb-0 fw-bold">
-                        Alice Wang 
-                        <span class="badge bg-success rounded-pill ms-1" style="font-size: 0.5em; vertical-align: middle;">✓</span>
-                    </h5>
-                    <small class="text-muted">Data Scientist</small>
+    {% if skills %}
+        {% for skill in skills %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge bg-secondary">{{ skill.category }}</span>
+                        <span class="badge bg-info text-dark">{{ skill.proficiency }}</span>
+                    </div>
+                    <h5 class="card-title fw-bold">{{ skill.title }}</h5>
+                    <p class="card-text text-muted small">{{ skill.description[:100] }}...</p>
+                    
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if skill.is_verified %}
+                            <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> Verified Mentor</span>
+                        {% else %}
+                            <span class="text-warning small text-dark"><i class="bi bi-exclamation-circle"></i> Unverified</span>
+                        {% endif %}
+                        
+                        <form action="/sessions/request" method="POST">
+                            <input type="hidden" name="provider_id" value="{{ skill.user_id }}">
+                            <input type="hidden" name="skill_id" value="{{ skill._id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Request Session</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="mb-3">
-                <div class="text-warning mb-1">★★★★★ <span class="text-muted text-sm">(24 reviews)</span></div>
-                <div class="badge bg-light text-dark mb-1">Credibility: 920</div>
-            </div>
-            <div class="mb-3 flex-grow-1">
-                <h6 class="fw-bold fs-6">Teaches:</h6>
-                <div class="d-flex flex-wrap gap-1">
-                    <span class="badge bg-primary">Machine Learning</span>
-                    <span class="badge bg-primary">Python</span>
-                    <span class="badge bg-primary">Pandas</span>
-                </div>
-            </div>
-            <button class="btn btn-outline-primary w-100 mt-auto">Send Request</button>
         </div>
-    </div>
-
-    <!-- Mentor Card 2 -->
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card h-100 p-4 mentor-card">
-            <div class="d-flex align-items-center mb-3">
-                <img src="https://ui-avatars.com/api/?name=Bob+Martin&size=56&background=random" class="rounded-circle me-3" alt="Avatar">
-                <div>
-                    <h5 class="mb-0 fw-bold">
-                        Bob Martin
-                        <span class="badge bg-success rounded-pill ms-1" style="font-size: 0.5em; vertical-align: middle;">✓</span>
-                    </h5>
-                    <small class="text-muted">Frontend Lead</small>
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="text-warning mb-1">★★★★☆ <span class="text-muted text-sm">(12 reviews)</span></div>
-                <div class="badge bg-light text-dark mb-1">Credibility: 750</div>
-            </div>
-            <div class="mb-3 flex-grow-1">
-                <h6 class="fw-bold fs-6">Teaches:</h6>
-                <div class="d-flex flex-wrap gap-1">
-                    <span class="badge bg-primary">React.js</span>
-                    <span class="badge bg-primary">CSS/HTML</span>
-                </div>
-            </div>
-            <button class="btn btn-outline-primary w-100 mt-auto">Send Request</button>
+        {% endblock %}
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <h4 class="text-muted">No skills posted yet. Be the first!</h4>
         </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}

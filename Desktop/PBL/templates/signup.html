@@ -6,22 +6,27 @@
     <div class="col-md-5">
         <div class="card p-4">
             <h3 class="text-center mb-4 fw-bold text-primary">Create an Account</h3>
-            <form action="/dashboard" method="GET">
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+            <form action="/auth/signup" method="POST">
                 <div class="mb-3">
                     <label class="form-label text-muted">Full Name</label>
-                    <input type="text" class="form-control form-control-lg" placeholder="John Doe" required>
+                    <input type="text" name="name" class="form-control form-control-lg" placeholder="John Doe" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-muted">Email address</label>
-                    <input type="email" class="form-control form-control-lg" placeholder="name@example.com" required>
+                    <input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-muted">Password</label>
-                    <input type="password" class="form-control form-control-lg" placeholder="Create a password" required>
+                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Create a password" required>
                 </div>
                 <div class="mb-4">
                     <label class="form-label text-muted">I want to...</label>
-                    <select class="form-select form-select-lg">
+                    <select name="role" class="form-select form-select-lg">
                         <option value="learn">Learn a skill</option>
                         <option value="teach">Teach a skill</option>
                         <option value="both">Both</option>

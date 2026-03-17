@@ -1,12 +1,24 @@
 from pymongo import MongoClient
+import urllib.parse
+from config import Config
 
-client = MongoClient("mongodb://localhost:27017/")
+# Connect to MongoDB using connection string from Config
+client = MongoClient(Config.MONGO_URI)
 
+# Database Name
 db = client["skillify"]
 
+# Collections
 users = db["users"]
+proofs = db["proofs"]
 skills = db["skills"]
 sessions = db["sessions"]
-certificates = db["certificates"]
 feedback = db["feedback"]
-proofs = db["proofs"]
+certificates = db["certificates"]
+
+# Indexes for fast querying
+users.create_index("email", unique=True)
+skills.create_index("title")
+sessions.create_index("requester_id")
+sessions.create_index("provider_id")
+certificates.create_index("certificate_hash", unique=True)

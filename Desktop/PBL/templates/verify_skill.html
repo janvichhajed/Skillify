@@ -1,42 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}Verify Skills - Skillify{% endblock %}
+{% block title %}Verify Mentorship - Skillify{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card p-4">
-            <h3 class="mb-4 text-primary fw-bold">Verify Your Skills</h3>
-            <p class="text-muted mb-4">Boost your credibility by providing proofs of your expertise. Verified mentors attract more learners.</p>
-            <form>
+        <h2 class="fw-bold mb-4 text-center">Verify Your Mentorship</h2>
+        <div class="card shadow-sm p-4">
+            <p class="text-muted mb-4">
+                To maintain trust on Skillify, mentors must be verified. Submit your GitHub profile or upload certificates and portfolios below.
+            </p>
+            
+            <form action="/verify" method="POST">
                 <div class="mb-4">
-                    <label class="form-label fw-bold">GitHub Profile Link</label>
-                    <input type="url" class="form-control" placeholder="https://github.com/yourusername">
+                    <label class="form-label fw-bold">1. GitHub Verification (Automated)</label>
+                    <input type="url" name="github_url" class="form-control" placeholder="https://github.com/yourusername">
+                    <small class="text-muted">We will scan your public repos and activity to establish an instant credibility score.</small>
                 </div>
                 
+                <hr>
+                
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Upload Certificates</label>
-                    <input type="file" class="form-control" accept=".pdf,image/*" multiple>
-                    <div class="form-text">Upload relevant course or achievement certificates.</div>
+                    <label class="form-label fw-bold">2. Manual Verification Proofs</label>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Portfolio URL</label>
+                        <input type="url" name="portfolio_url" class="form-control" placeholder="https://yourportfolio.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Certificate Verification Link</label>
+                        <input type="url" name="cert_url" class="form-control" placeholder="e.g. Coursera, Udemy credential link">
+                    </div>
                 </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Upload Portfolio or Video</label>
-                    <input type="file" class="form-control" accept="video/*,.pdf">
-                    <div class="form-text">A showcase of your previous work or a short introductory video.</div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Mini Demo Task Upload</label>
-                    <input type="file" class="form-control" accept=".zip,.rar,.tar.gz,.pdf">
-                    <div class="form-text">Upload solutions to any platform-provided mini demo tasks here.</div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Event Details (For No-Link Certificates)</label>
-                    <textarea class="form-control" rows="4" placeholder="Describe the event, date, and your achievements..."></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-success btn-lg w-100">Submit for Verification</button>
+                
+                <button type="submit" class="btn btn-warning w-100 fw-bold">Submit for Verification</button>
             </form>
         </div>
     </div>
