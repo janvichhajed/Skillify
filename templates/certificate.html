@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Certificate - Skillify{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+        <!-- Certificate Card -->
+        <div class="card p-5 mb-4 position-relative overflow-hidden shadow-lg border-0" style="background: linear-gradient(to right bottom, #ffffff, #f0f4ff);">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="border: 15px solid #4e73df; opacity: 0.1; pointer-events: none;"></div>
+            
+            <div class="mb-4">
+                <span class="display-1 text-warning">🏆</span>
+            </div>
+            
+            <h1 class="text-primary fw-bold mb-4" style="font-family: 'Georgia', serif; font-size: 3rem;">Certificate of Completion</h1>
+            
+            <p class="text-uppercase tracking-wider text-muted mb-3">This certifies that</p>
+            <h2 class="display-5 fw-bold mb-4" style="font-family: 'Georgia', serif;">John Doe</h2>
+            
+            <p class="text-uppercase tracking-wider text-muted mb-3">has successfully completed the skill session for</p>
+            <h3 class="fw-bold text-dark mb-5">Advanced Python Programming</h3>
+            
+            <div class="row text-start mt-5 pt-3 border-top border-2">
+                <div class="col-8">
+                    <p class="mb-1 text-muted">Certificate ID: <strong class="text-dark">SKL-987654321</strong></p>
+                    <p class="mb-0 text-muted">Issued on: <strong class="text-dark">October 24, 2023</strong></p>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="fw-bold" style="font-family: cursive; font-size: 1.5rem; color: #4e73df;">Skillify Auth</div>
+                    <p class="text-muted small mb-0">Authorized Signature</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex justify-content-center gap-3">
+            <button class="btn btn-primary px-4"><span class="me-2">⬇️</span> Download PDF</button>
+            <a href="/verify_certificate" class="btn btn-outline-secondary px-4">Verify Certificate</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
