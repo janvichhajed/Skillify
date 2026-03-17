@@ -1,0 +1,53 @@
+/* Custom Styles for Skillify */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fc;
+    color: #333;
+}
+
+.navbar {
+    background-color: #4e73df;
+}
+
+.navbar-brand, .nav-link {
+    color: #fff !important;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: none;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+}
+
+.btn-success {
+    background-color: #1cc88a;
+    border: none;
+}
+
+.btn-info {
+    background-color: #36b9cc;
+    border: none;
+    color: white;
+}
+
+/* Mentor Card Specific Styles */
+.mentor-card {
+    display: flex;
+    flex-direction: column;
+}
