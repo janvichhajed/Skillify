@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Session Management - Skillify{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h3 class="fw-bold text-primary">Manage Sessions</h3>
+    </div>
+</div>
+
+<div class="row">
+    <!-- incoming requests -->
+    <div class="col-md-6 mb-4">
+        <div class="card p-0 h-100">
+            <div class="card-header bg-white p-4 border-0">
+                <h5 class="fw-bold mb-0">Pending Session Requests</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="fw-bold mb-1">Request from Bob</h6>
+                            <p class="text-muted mb-2 text-sm">"I need help setting up my Python environment for web dev."</p>
+                            <span class="badge bg-light text-dark">Topic: Python</span>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <button class="btn btn-sm btn-success px-3">Accept</button>
+                            <button class="btn btn-sm btn-outline-danger px-3">Reject</button>
+                        </div>
+                    </div>
+                </li>
+                 <li class="list-group-item p-4 text-center text-muted">
+                    No more pending requests.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- active sessions -->
+    <div class="col-md-6 mb-4">
+        <div class="card p-0 h-100">
+            <div class="card-header bg-white p-4 border-0">
+                <h5 class="fw-bold mb-0">Active Sessions</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="fw-bold mb-1 text-primary">Machine Learning Basics</h6>
+                            <p class="text-muted mb-0">Partner: Alice W.</p>
+                        </div>
+                        <span class="badge bg-warning text-dark px-2 py-1">In Progress</span>
+                    </div>
+                    <div class="bg-light p-3 rounded mb-3">
+                        <small class="d-block mb-1 text-muted">Meeting Link:</small>
+                        <a href="#" class="d-block text-truncate">https://meet.skillify.local/abc-xyz-def</a>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary btn-sm">Message</button>
+                        <!-- Goes to feedback on complete -->
+                        <a href="/feedback" class="btn btn-primary btn-sm">Mark Completed</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
