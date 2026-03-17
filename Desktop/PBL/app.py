@@ -20,9 +20,25 @@ app.register_blueprint(certificate_bp)
 def home():
     return render_template("login.html")
 
+@app.route("/login")
+def login_page():
+    return render_template("login.html")
+
+@app.route("/signup")
+def signup_page():
+    return render_template("signup.html")
+
 @app.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
+
+@app.route("/browse_skills")
+def browse_skills_page():
+    return render_template("browse_skills.html")
+
+@app.route("/profile")
+def profile_page():
+    return render_template("profile.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
