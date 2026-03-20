@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Basic Form validation before submit
+    // Page Fade-in Effect
+    document.body.classList.add('fade-in');
+
+    // Form validation
     const forms = document.querySelectorAll('form');
-    
     forms.forEach(form => {
         form.addEventListener('submit', function(event) {
             if (!form.checkValidity()) {
@@ -9,16 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.stopPropagation();
             }
             form.classList.add('was-validated');
+            
+            // Subtle button loading state
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn && form.checkValidity()) {
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+                btn.style.opacity = '0.8';
+            }
         }, false);
     });
 
-    // Animate alerts
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            // Optional auto dismiss for flash messages
-            // alert.style.opacity = '0';
-            // setTimeout(() => alert.remove(), 300);
-        }, 5000);
+    // Button Click Feedback (Scale Effect)
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
+        btn.addEventListener('mouseup', () => btn.style.transform = '');
+        btn.addEventListener('mouseleave', () => btn.style.transform = '');
     });
 });
+

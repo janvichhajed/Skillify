@@ -40,6 +40,14 @@ def dashboard():
 def browse_skills_page():
     return render_template("browse_skills.html", current_user=session.get("user_id"))
 
+@app.route("/login")
+def login_redirect():
+    return redirect(url_for("auth.login_page"))
+
+@app.route("/signup")
+def signup_redirect():
+    return redirect(url_for("auth.signup_page"))
+
 @app.route("/profile")
 def profile_page():
     if "user_id" not in session:
