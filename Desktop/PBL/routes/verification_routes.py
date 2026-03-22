@@ -16,6 +16,7 @@ def verify_page():
         github_url = request.form.get("github_url")
         portfolio_url = request.form.get("portfolio_url")
         cert_url = request.form.get("cert_url")
+        category = request.form.get("category")
         
         # Calculate github score automatically
         gh_score = verify_github_profile(github_url) if github_url else 0
@@ -24,7 +25,8 @@ def verify_page():
             user_id=session["user_id"],
             github_url=github_url,
             portfolio_url=portfolio_url,
-            cert_url=cert_url
+            cert_url=cert_url,
+            category=category
         )
         proof.github_score = gh_score
         

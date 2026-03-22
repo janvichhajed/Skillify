@@ -12,20 +12,58 @@
                 <div>
                     <h3 class="fw-bold mb-0">{{ current_user.user_name }}</h3>
                     <p class="text-muted mb-0">Role: {{ current_user.user_role | title }}</p>
-                    <span class="badge bg-warning text-dark mt-2">Credibility Score: 0</span>
+                    {% if user and user.credibility_score %}
+                        <span class="badge bg-warning text-dark mt-2">Credibility Score: {{ user.credibility_score }}</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark mt-2">Credibility Score: 0</span>
+                    {% endif %}
                 </div>
             </div>
-            
+
             <hr>
-            
-            <h5 class="fw-bold mt-4">Verification Status</h5>
-            <div class="alert alert-secondary">
-                You are currently Unverified. <a href="/verify" class="alert-link">Submit proofs here</a> to become a verified mentor.
+
+            <h5 class="fw-bold mt-2">Verification Status</h5>
+            {% if user and user.verified %}
+                <div class="alert alert-success">
+                    ✅ You are a <strong>Verified Mentor</strong>. You can post skills and teach others.
+                </div>
+            {% else %}
+                <div class="alert alert-secondary">
+                    You are currently <strong>Unverified</strong>. <a href="/verify/" class="alert-link">Submit proofs here</a> to become a verified mentor.
+                </div>
+            {% endif %}
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+                <h5 class="fw-bold mb-0">My Skills</h5>
+                <a href="/skills/post" class="btn btn-primary btn-sm">+ Post a New Skill</a>
             </div>
-            
-            <h5 class="fw-bold mt-4">My Skills</h5>
-            <p class="text-muted">You have not posted any skills yet.</p>
-            <a href="/skills/post" class="btn btn-primary btn-sm">Post a New Skill</a>
+
+            {% if my_skills %}
+                <div class="row">
+                    {% for skill in my_skills %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="badge bg-secondary">{{ skill.category }}</span>
+                                    <span class="badge bg-info text-dark">{{ skill.proficiency }}</span>
+                                </div>
+                                <h6 class="fw-bold mt-2">{{ skill.title }}</h6>
+                                <p class="text-muted small mb-2">{{ skill.description[:80] }}...</p>
+                                <form action="/skills/delete/{{ skill._id }}" method="POST"
+                                      onsubmit="return confirm('Delete this skill?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">🗑 Delete Skill</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">You have not posted any skills yet.</p>
+            {% endif %}
         </div>
     </div>
 </div>

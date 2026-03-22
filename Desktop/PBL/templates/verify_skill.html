@@ -10,7 +10,22 @@
                 To maintain trust on Skillify, mentors must be verified. Submit your GitHub profile or upload certificates and portfolios below.
             </p>
             
-            <form action="/verify" method="POST">
+            <form action="/verify/" method="POST">
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Skill Category</label>
+                    <select name="category" class="form-select form-select-lg" required>
+                        <option value="" disabled selected>-- Select a skill category --</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Design">Design</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <small class="text-muted">Select the category of the skill you want to get verified in.</small>
+                </div>
+
+                <hr>
+
                 <div class="mb-4">
                     <label class="form-label fw-bold">1. GitHub Verification (Automated)</label>
                     <input type="url" name="github_url" class="form-control" placeholder="https://github.com/yourusername">

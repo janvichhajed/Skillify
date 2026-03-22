@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, session, url_for
 from flask_cors import CORS
 from config import Config
+from database.db import skills, users
 import os
 
 from routes.auth_routes import auth_bp
@@ -38,7 +39,8 @@ def dashboard():
 
 @app.route("/browse_skills")
 def browse_skills_page():
-    return render_template("browse_skills.html", current_user=session.get("user_id"))
+    all_skills = list(skills.find())
+    return render_template("browse_skills.html", skills=all_skills, current_user=session.get("user_id"))
 
 @app.route("/login")
 def login_redirect():
@@ -52,7 +54,10 @@ def signup_redirect():
 def profile_page():
     if "user_id" not in session:
         return redirect(url_for("auth.login_page"))
-    return render_template("profile.html", current_user=session)
+    from bson import ObjectId
+    user = users.find_one({"_id": ObjectId(session["user_id"])})
+    my_skills = list(skills.find({"user_id": session["user_id"]}))
+    return render_template("profile.html", current_user=session, user=user, my_skills=my_skills)
 
 if __name__ == "__main__":
     app.run(debug=True)
