@@ -4,37 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Skillify{% endblock %}</title>
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body class="fade-in">
-    <nav class="navbar navbar-expand-lg mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">Skillify</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('skill.browse_skills') }}">Browse Skills</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('profile_page') }}">Profile</a></li>
-                    {% if session.get('user_id') %}
-                        <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Logout</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login_page') }}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.signup_page') }}">Sign Up</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container pb-5">
-        {% block content %}{% endblock %}
+    <!-- Animated Vercel-like mesh background -->
+    <div class="mesh-bg">
+        <div class="mesh-blob blob-1"></div>
+        <div class="mesh-blob blob-2"></div>
     </div>
+
+    <div class="app-wrapper">
+        {% if session.get('user_id') %}
+        <!-- Sidebar for Authenticated Users -->
+        <nav class="sidebar">
+            <div class="sidebar-header stagger-1">
+                <a class="sidebar-brand text-gradient" href="{{ url_for('home') }}">
+                    <i class="fa-solid fa-bolt me-2"></i>Skillify
+                </a>
+                <button class="btn btn-sm d-lg-none text-muted" id="sidebarCloseBtn">
+                    <i class="fa-solid fa-times fs-5"></i>
+                </button>
+            </div>
+            <div class="sidebar-menu">
+                <p class="sidebar-title sidebar-label stagger-2">Application</p>
+                <div class="stagger-3">
+                    <a class="sidebar-link" href="{{ url_for('dashboard') }}"><i class="fa-solid fa-border-all sidebar-icon"></i> Overview</a>
+                    <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}"><i class="fa-solid fa-magnifying-glass sidebar-icon"></i> Discovery</a>
+                    <a class="sidebar-link" href="/certificates/verify"><i class="fa-solid fa-shield-check sidebar-icon"></i> Verify</a>
+                </div>
+                
+                <p class="sidebar-title sidebar-label mt-4 stagger-4">Settings</p>
+                <div class="stagger-5">
+                    <a class="sidebar-link" href="{{ url_for('profile_page') }}"><i class="fa-solid fa-circle-user sidebar-icon"></i> My Identity</a>
+                    <a class="sidebar-link text-danger mt-3" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket sidebar-icon"></i> Sign Out</a>
+                </div>
+            </div>
+        </nav>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <main class="main-content {% if not session.get('user_id') %}full-width{% endif %}">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg glass-navbar mb-4 sticky-top">
+                <div class="container-fluid px-4 px-lg-5">
+                    {% if session.get('user_id') %}
+                    <button class="btn btn-light d-lg-none me-2 border shadow-sm" id="sidebarToggleBtn">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    {% endif %}
+                    
+                    {% if not session.get('user_id') %}
+                    <a class="navbar-brand text-gradient fw-bold fs-4" href="{{ url_for('home') }}">
+                        <i class="fa-solid fa-bolt me-1"></i> Skillify
+                    </a>
+                    {% endif %}
+                    
+                    <button class="navbar-toggler border-0 shadow-none px-0" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
+                        <i class="fa-solid fa-ellipsis-vertical fs-4 text-muted"></i>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="topNavbar">
+                        {% if not session.get('user_id') %}
+                        <!-- Public Links -->
+                        <ul class="navbar-nav ms-auto align-items-center gap-2">
+                            <li class="nav-item"><a class="nav-link fw-medium text-dark px-3" href="{{ url_for('skill.browse_skills') }}">Explore</a></li>
+                            <li class="nav-item"><a class="nav-link fw-medium text-dark px-3" href="/certificates/verify">Verification</a></li>
+                            <li class="nav-item ms-lg-2"><a class="btn-ultra btn-outline-ultra" href="{{ url_for('auth.login_page') }}">Log in</a></li>
+                            <li class="nav-item"><a class="btn-ultra btn-primary-ultra" href="{{ url_for('auth.signup_page') }}">Get Started</a></li>
+                        </ul>
+                        {% else %}
+                        <!-- Authenticated Topbar Items -->
+                        <ul class="navbar-nav ms-auto align-items-center gap-3">
+                            <li class="nav-item d-none d-lg-block">
+                                <span class="badge bg-white text-dark border shadow-ultra-sm px-3 py-2 rounded-pill fw-medium font-monospace" style="letter-spacing: -0.5px;">
+                                    <span style="color: #10B981;">●</span> Secure Session
+                                </span>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 border-0 bg-transparent py-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="avatar-circle shadow-ultra-sm text-white" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                                        {{ session.get('user_name', 'U')[0] | upper }}
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-ultra-lg border-0 rounded-4 mt-3 p-2 py-3" style="min-width: 200px;">
+                                    <li class="px-3 pb-2 mb-2 border-bottom border-light">
+                                        <h6 class="mb-0 fw-bold text-dark">{{ session.get('user_name', 'User') }}</h6>
+                                        <small class="text-muted">Authenticated</small>
+                                    </li>
+                                    <li><a class="dropdown-item rounded-3 py-2 fw-medium text-dark" href="{{ url_for('profile_page') }}"><i class="fa-solid fa-address-card w-20 me-2 text-muted"></i> Profile</a></li>
+                                    <li><a class="dropdown-item rounded-3 py-2 fw-medium text-danger mt-1" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-power-off w-20 me-2"></i> Log out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="container-fluid px-4 px-lg-5 pb-5 content-area slide-in">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

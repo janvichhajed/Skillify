@@ -12,6 +12,9 @@ def request_session():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
         
+    if session.get("user_role") not in ["learn", "learner", "both"]:
+        return jsonify({"error": "Role not authorized to request sessions"}), 403
+        
     provider_id = request.form.get("provider_id")
     skill_id = request.form.get("skill_id")
     scheduled_at = request.form.get("scheduled_at")

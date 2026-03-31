@@ -7,6 +7,16 @@ from services.certificate_verification import verify_system_certificate
 
 certificate_bp = Blueprint("certificate", __name__, url_prefix="/certificates")
 
+@certificate_bp.route("/")
+def list_certificates():
+    if "user_id" not in session:
+        return redirect("/auth/login")
+        
+    user_certs = list(certificates.find({"learner_id": str(session["user_id"])}))
+    
+    # We also pass the user's name to display
+    return render_template("certificate.html", certificates=user_certs)
+
 @certificate_bp.route("/generate/<session_id>", methods=["POST"])
 def generate(session_id):
     if "user_id" not in session:

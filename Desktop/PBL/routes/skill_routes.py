@@ -14,6 +14,9 @@ def browse_skills():
 def post_skill():
     if "user_id" not in session:
         return redirect("/auth/login")
+        
+    if session.get("user_role") not in ["teach", "both"]:
+        return redirect("/dashboard")
     
     # Fetch the user and check verified status
     user = users.find_one({"_id": ObjectId(session["user_id"])})

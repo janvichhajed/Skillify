@@ -1,60 +1,96 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard - Skillify{% endblock %}
+{% block title %}Overview - Skillify{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <h2 class="fw-bold text-primary">Welcome, {{ current_user.user_name }}!</h2>
-        <p class="text-muted">Manage your skill exchange journey.</p>
+<!-- Spectacular Hero Banner -->
+<div class="hero-banner stagger-1 mb-5">
+    <div class="row align-items-center position-relative" style="z-index: 2;">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-2">Welcome inherently, <br><span class="text-white">{{ current_user.user_name }}</span>.</h1>
+            <p class="fs-5 text-white-50 mt-3 col-md-10" style="font-family: 'Inter', sans-serif;">
+                Your verified skill exchange ecosystem is active. Manage requests, discover talent, and track your cryptographic certificates.
+            </p>
+            <div class="mt-4 pt-2">
+                {% if current_user.user_role in ['teach', 'both'] %}
+                <a href="/skills/post" class="btn-ultra btn-accent-glow me-3 border-0">
+                    <i class="fa-solid fa-layer-group me-2"></i> Publish Skill
+                </a>
+                {% endif %}
+                <a href="/browse_skills" class="btn-ultra btn-outline-ultra border-white text-white mt-3 mt-sm-0">
+                    Explore Network
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+            <!-- Decorative isometric element -->
+            <div class="position-absolute end-0 top-50 translate-middle-y end-0 pe-5" style="opacity: 0.8; mix-blend-mode: screen;">
+                <i class="fa-brands fa-connectdevelop text-white" style="font-size: 10rem;"></i>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">My Learning (Requests)</h5>
+<!-- Modern Stat Grid -->
+<div class="row g-4 mb-5">
+    <!-- Stat Card 1 -->
+    {% if current_user.user_role in ['learn', 'learner', 'both'] %}
+    <div class="col-md-6 col-xl-3 stagger-2">
+        <div class="card-glass card-hover-glow h-100 p-4">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary-light text-primary p-3 rounded-circle me-3" style="width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-shapes"></i>
+                </div>
+                <h6 class="text-muted fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Requests</h6>
             </div>
-            <div class="card-body">
-                <p>Sessions you have requested to learn from mentors.</p>
-                <a href="/browse_skills" class="btn btn-outline-primary">Find a Skill</a>
+            <h2 class="fw-bold text-dark mb-1">My Learning</h2>
+            <p class="text-muted small mb-0">Track sessions you've joined.</p>
+            <a href="/browse_skills" class="stretched-link"></a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Stat Card 2 -->
+    {% if current_user.user_role in ['teach', 'both'] %}
+    <div class="col-md-6 col-xl-3 stagger-3">
+        <div class="card-glass card-hover-glow h-100 p-4">
+            <div class="d-flex align-items-center mb-4">
+                <div class="p-3 rounded-circle me-3" style="background-color: #ECFCCB; color: #65A30D; width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-fire"></i>
+                </div>
+                <h6 class="text-muted fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Teaching</h6>
             </div>
+            <h2 class="fw-bold text-dark mb-1">My Offers</h2>
+            <p class="text-muted small mb-0">Manage requested skills.</p>
+            <a href="/skills/post" class="stretched-link"></a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Stat Card 3 -->
+    <div class="col-md-6 col-xl-3 stagger-4">
+        <div class="card-glass card-hover-glow h-100 p-4 position-relative" style="background: linear-gradient(145deg, #09090B, #18181B); border-color: #27272A;">
+            <div class="d-flex align-items-center mb-4">
+                <div class="p-3 rounded-circle me-3 border border-dark border-opacity-50" style="background: rgba(255,255,255,0.05); color: #fff; width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h6 class="text-white-50 fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Awards</h6>
+            </div>
+            <h2 class="fw-bold text-white mb-1">Certificates</h2>
+            <p class="text-white-50 small mb-0">Cryptographically verifiable.</p>
+            <a href="/certificates" class="stretched-link"></a>
         </div>
     </div>
     
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">My Teaching (Provided)</h5>
-            </div>
-            <div class="card-body">
-                <p>Sessions others have requested from you.</p>
-                <a href="/skills/post" class="btn btn-outline-success">Post a Skill</a>
-            </div>
+    <!-- Stat Card 4 (Action / Verification) -->
+    {% if current_user.user_role in ['teach', 'both'] %}
+    <div class="col-md-6 col-xl-3 stagger-5">
+        <div class="card-glass border-primary border-opacity-25 h-100 p-4 text-center d-flex flex-column justify-content-center align-items-center" style="background: linear-gradient(to bottom, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.1));">
+            <i class="fa-solid fa-shield-halved text-primary fs-2 mb-3"></i>
+            <h5 class="fw-bold text-dark mb-2">Unlock Mentorship</h5>
+            <p class="text-muted small mb-3">Authenticate GitHub context.</p>
+            <a href="/verify" class="btn-ultra btn-primary-ultra btn-sm px-4">Initialize</a>
         </div>
     </div>
+    {% endif %}
 </div>
-
-<div class="row mt-3">
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5>Verify Your Skills</h5>
-                <p class="text-muted small">Unlock mentor privileges by verifying your github and uploading proofs.</p>
-                <a href="/verify" class="btn btn-warning">Get Verified</a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm bg-light">
-            <div class="card-body text-center">
-                <h5>My Certificates</h5>
-                <p class="text-muted small">View certificates earned from completed sessions.</p>
-                <a href="/certificates" class="btn btn-info text-white">View Certificates</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 {% endblock %}

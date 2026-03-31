@@ -1,41 +1,53 @@
 {% extends 'base.html' %}
-{% block title %}Sign Up - Skillify{% endblock %}
+{% block title %}Sign up - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card p-4">
-            <h3 class="text-center mb-4 fw-bold text-primary">Create an Account</h3>
+<div class="row justify-content-center align-items-center mt-4">
+    <div class="col-md-6 col-lg-5 col-xl-4 stagger-1" style="min-width: 400px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark mb-1">Create an account</h2>
+            <p class="text-muted small">Join the verified peer-to-peer network.</p>
+        </div>
+
+        <div class="card-glass border-subtle shadow-ultra-lg p-4 p-md-5">
             {% if error %}
-            <div class="alert alert-danger" role="alert">
-                {{ error }}
+            <div class="alert alert-danger d-flex align-items-center rounded-3 mb-4 bg-white border border-danger border-opacity-25 text-danger" role="alert" style="font-size: 0.9rem;">
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                <div>{{ error }}</div>
             </div>
             {% endif %}
-            <form action="/auth/signup" method="POST">
-                <div class="mb-3">
-                    <label class="form-label text-muted">Full Name</label>
-                    <input type="text" name="name" class="form-control form-control-lg" placeholder="John Doe" required>
+            
+            <form action="/auth/signup" method="POST" class="needs-validation" novalidate>
+                <div class="form-floating form-floating-clean mb-3">
+                    <input type="text" name="name" class="form-control" id="nameInput" placeholder="John Doe" required>
+                    <label for="nameInput">Full Name</label>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label text-muted">Email address</label>
-                    <input type="email" name="email" class="form-control form-control-lg" placeholder="name@example.com" required>
+                
+                <div class="form-floating form-floating-clean mb-3">
+                    <input type="email" name="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+                    <label for="emailInput">Email address</label>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label text-muted">Password</label>
-                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Create a password" required>
+                
+                <div class="form-floating form-floating-clean mb-3">
+                    <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password" required>
+                    <label for="passwordInput">Password</label>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label text-muted">I want to...</label>
-                    <select name="role" class="form-select form-select-lg">
+                
+                <div class="form-floating form-floating-clean mb-4">
+                    <select name="role" class="form-select bg-white" id="roleSelect" required>
                         <option value="learn">Learn a skill</option>
                         <option value="teach">Teach a skill</option>
-                        <option value="both">Both</option>
+                        <option value="both" selected>Both</option>
                     </select>
+                    <label for="roleSelect">I am looking to...</label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">Sign Up</button>
+                
+                <button type="submit" class="btn-ultra btn-primary-ultra w-100 mb-4" style="height: 3.25rem;">Create Account</button>
             </form>
+            
             <div class="text-center">
-                <span class="text-muted">Already have an account?</span> <a href="{{ url_for('auth.login_page') }}" class="text-decoration-none fw-bold">Login</a>
+                <span class="text-muted" style="font-size: 0.9rem;">Already have an account?</span> 
+                <a href="{{ url_for('auth.login_page') }}" class="text-primary fw-bold text-decoration-none ms-1" style="font-size: 0.9rem;">Sign in</a>
             </div>
         </div>
     </div>

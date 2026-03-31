@@ -35,6 +35,7 @@
 
             <hr>
 
+            {% if session.get('user_role') in ['teach', 'both'] %}
             <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
                 <h5 class="fw-bold mb-0">My Skills</h5>
                 <a href="/skills/post" class="btn btn-primary btn-sm">+ Post a New Skill</a>
@@ -63,6 +64,7 @@
                 </div>
             {% else %}
                 <p class="text-muted">You have not posted any skills yet.</p>
+            {% endif %}
             {% endif %}
         </div>
     </div>
