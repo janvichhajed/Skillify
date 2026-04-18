@@ -2,30 +2,38 @@
 {% block title %}Leave Feedback - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="fw-bold text-center mb-4">Rate Your Session</h2>
-        <div class="card shadow-sm p-4">
-            <p class="text-muted text-center mb-4">Your feedback helps mentors build their credibility score and keeps the community trustworthy.</p>
-            
+<div class="flex justify-center animate-fade-up">
+    <div style="width: 100%; max-width: 500px;">
+        <div class="text-center mb-4">
+            <h2 class="text-primary text-2xl font-semibold">Session Feedback</h2>
+            <p class="text-secondary text-sm">Your review shapes mentor credibility scores.</p>
+        </div>
+
+        <div class="glass-card" style="padding: 32px;">
             <form action="/sessions/{{ session_id }}/feedback" method="POST">
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Overall Rating (1 to 5 Stars)</label>
-                    <select name="rating" class="form-select form-select-lg" required>
-                        <option value="5">⭐⭐⭐⭐⭐ (5 - Excellent)</option>
-                        <option value="4">⭐⭐⭐⭐ (4 - Very Good)</option>
-                        <option value="3">⭐⭐⭐ (3 - Average)</option>
-                        <option value="2">⭐⭐ (2 - Poor)</option>
-                        <option value="1">⭐ (1 - Terrible)</option>
-                    </select>
+                
+                <div class="form-group text-center mb-4">
+                    <label class="form-label text-primary mb-2">Overall Rating</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" required />
+                        <label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star4" name="rating" value="4" />
+                        <label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star3" name="rating" value="3" />
+                        <label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star2" name="rating" value="2" />
+                        <label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+                        <input type="radio" id="star1" name="rating" value="1" />
+                        <label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+                    </div>
                 </div>
                 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Written Review</label>
-                    <textarea name="review_text" class="form-control" rows="4" placeholder="How was the mentor? Did you learn the skill?"></textarea>
+                <div class="form-group">
+                    <label class="form-label text-primary">Written Review</label>
+                    <textarea name="review_text" rows="4" placeholder="Share your experience..."></textarea>
                 </div>
                 
-                <button type="submit" class="btn btn-primary btn-lg w-100">Submit Feedback</button>
+                <button type="submit" class="btn btn-primary w-full mt-2">Submit Review</button>
             </form>
         </div>
     </div>

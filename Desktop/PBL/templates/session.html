@@ -2,43 +2,72 @@
 {% block title %}Session Overview - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <h2 class="fw-bold mb-4 text-primary">Skill Session #{{ session_data._id }}</h2>
+<div class="flex justify-center animate-fade-up stagger-1">
+    <div style="width: 100%; max-width: 600px;">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-primary text-xl">Session View</h2>
+            <span class="badge 
+                {% if session_data.status == 'pending' %}badge-warning
+                {% elif session_data.status == 'accepted' %}badge-info
+                {% else %}badge-success{% endif %}" style="padding: 6px 12px;">
+                {{ session_data.status | title }}
+            </span>
+        </div>
         
-        <div class="card shadow-sm p-4 mb-4">
-            <h4 class="fw-bold">Status: <span class="badge bg-secondary">{{ session_data.status | title }}</span></h4>
-            <hr>
-            <p><strong>Scheduled For:</strong> {{ session_data.scheduled_at }}</p>
-            <p><strong>Created On:</strong> {{ session_data.created_at }}</p>
+        <div class="card-dark border-accent p-4 mb-4">
+            <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                ID: {{ session_data._id }}
+            </div>
+
+            <div class="grid grid-2 gap-4 mb-4" style="font-size: 0.9rem;">
+                <div>
+                    <span class="text-muted flex block mb-1">Scheduled Date</span>
+                    <span class="text-primary">{{ session_data.scheduled_at }}</span>
+                </div>
+                <div>
+                    <span class="text-muted flex block mb-1">Created At</span>
+                    <span class="text-primary">{{ session_data.created_at }}</span>
+                </div>
+            </div>
             
+            <hr>
+
             {% if session_data.status == 'pending' %}
-                <div class="alert alert-warning mt-3">Waiting for Mentor to accept the request.</div>
+                <div class="card-dark" style="background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); margin-top: 16px; padding: 16px;">
+                    <p class="text-warning text-sm mb-0"><i class="fa-solid fa-hourglass-half"></i> Waiting for Mentor to accept.</p>
+                </div>
+
                 {% if current_user.user_id == session_data.provider_id %}
-                    <form action="/sessions/{{ session_data._id }}/accept" method="POST">
-                        <button type="submit" class="btn btn-success">Accept Session</button>
+                    <form action="/sessions/{{ session_data._id }}/accept" method="POST" class="mt-4">
+                        <button type="submit" class="btn btn-success w-full">Accept Session</button>
                     </form>
                 {% endif %}
                 
             {% elif session_data.status == 'accepted' %}
-                <div class="alert alert-info mt-3">Session is active. Have your meeting and mark as complete afterwards!</div>
-                <form action="/sessions/{{ session_data._id }}/complete" method="POST">
-                    <button type="submit" class="btn btn-primary w-100">Mark as Completed</button>
+                <div class="card-dark" style="background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.2); margin-top: 16px; padding: 16px;">
+                    <p class="text-info text-sm mb-0"><i class="fa-solid fa-tower-broadcast"></i> Session is currently active.</p>
+                </div>
+                
+                <form action="/sessions/{{ session_data._id }}/complete" method="POST" class="mt-4">
+                    <button type="submit" class="btn btn-primary w-full">Mark as Completed</button>
                 </form>
                 
             {% elif session_data.status == 'completed' %}
-                <div class="alert alert-success mt-3">This session was successfully completed on {{ session_data.completed_at }}!</div>
+                <div class="card-dark" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); margin-top: 16px; padding: 16px;">
+                    <p class="text-success text-sm mb-0"><i class="fa-solid fa-square-check"></i> Finished on {{ session_data.completed_at }}</p>
+                </div>
                 
+                <div class="mt-4 flex flex-col gap-2">
                 {% if current_user.user_id == session_data.requester_id and not session_data.feedback_given %}
-                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-warning w-100">Leave Feedback for Mentor</a>
+                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-warning w-full">Leave Feedback</a>
                 {% elif session_data.feedback_given and not session_data.certificate_issued %}
-                    <!-- If feedback given, allow cert gen -->
                     <form action="/certificates/generate/{{ session_data._id }}" method="POST">
-                        <button type="submit" class="btn btn-dark w-100">Generate Completion Certificate</button>
+                        <button type="submit" class="btn btn-accent w-full" style="background: var(--bg-hover); color: var(--accent-glow); border: 1px solid var(--border-accent);">Generate Certificate</button>
                     </form>
                 {% elif session_data.certificate_issued %}
-                    <a class="btn btn-outline-dark w-100 disabled">Certificate Already Issued</a>
+                    <button class="btn btn-outline w-full" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-lock"></i> Certificate Issued</button>
                 {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>

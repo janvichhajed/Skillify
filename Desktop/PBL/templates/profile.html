@@ -2,68 +2,74 @@
 {% block title %}Profile - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm p-4">
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px; font-size: 32px;">
+<div class="flex justify-center animate-fade-up">
+    <div style="width: 100%; max-width: 800px;">
+        <div class="card-dark mb-4">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="avatar-circle">
                     {{ current_user.user_name[0] | upper }}
                 </div>
                 <div>
-                    <h3 class="fw-bold mb-0">{{ current_user.user_name }}</h3>
-                    <p class="text-muted mb-0">Role: {{ current_user.user_role | title }}</p>
+                    <h3 class="text-primary text-xl font-semibold mb-1">{{ current_user.user_name }}</h3>
+                    <p class="text-secondary text-sm mb-2"><span class="badge badge-info">{{ current_user.user_role | title }} Account</span></p>
+                    
                     {% if user and user.credibility_score %}
-                        <span class="badge bg-warning text-dark mt-2">Credibility Score: {{ user.credibility_score }}</span>
+                        <span class="badge badge-warning"><i class="fa-solid fa-star me-1"></i> Credibility: {{ user.credibility_score }}</span>
                     {% else %}
-                        <span class="badge bg-warning text-dark mt-2">Credibility Score: 0</span>
+                        <span class="badge badge-warning text-dark"><i class="fa-regular fa-star me-1"></i> Credibility: 0</span>
                     {% endif %}
                 </div>
             </div>
 
             <hr>
 
-            <h5 class="fw-bold mt-2">Verification Status</h5>
+            <h5 class="text-primary mb-3">Verification Tier</h5>
             {% if user and user.verified %}
-                <div class="alert alert-success">
-                    ✅ You are a <strong>Verified Mentor</strong>. You can post skills and teach others.
+                <div class="flex items-center gap-3 p-3 rounded" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <i class="fa-solid fa-shield-check text-success" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h6 class="text-success mb-0" style="font-size: 0.95rem;">Verified Mentor</h6>
+                        <p class="text-secondary text-sm mb-0" style="opacity: 0.8;">Full network privileges unclocked.</p>
+                    </div>
                 </div>
             {% else %}
-                <div class="alert alert-secondary">
-                    You are currently <strong>Unverified</strong>. <a href="/verify/" class="alert-link">Submit proofs here</a> to become a verified mentor.
+                <div class="flex items-center gap-3 p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-shield text-muted" style="font-size: 1.5rem;"></i>
+                    <div style="flex-grow: 1;">
+                        <h6 class="text-primary mb-0" style="font-size: 0.95rem;">Unverified</h6>
+                        <p class="text-muted text-sm mb-0">Restricted features. Please submit proofs.</p>
+                    </div>
+                    <a href="/verify/" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">Verify Now</a>
                 </div>
             {% endif %}
 
             <hr>
 
             {% if session.get('user_role') in ['teach', 'both'] %}
-            <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
-                <h5 class="fw-bold mb-0">My Skills</h5>
-                <a href="/skills/post" class="btn btn-primary btn-sm">+ Post a New Skill</a>
+            <div class="flex justify-between items-center mb-4">
+                <h5 class="text-primary mb-0">My Capabilities</h5>
+                <a href="/skills/post" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem;"><i class="fa-solid fa-plus me-1"></i> Add Skill</a>
             </div>
 
             {% if my_skills %}
-                <div class="row">
+                <div class="grid grid-2">
                     {% for skill in my_skills %}
-                    <div class="col-md-6 mb-3">
-                        <div class="card border h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="badge bg-secondary">{{ skill.category }}</span>
-                                    <span class="badge bg-info text-dark">{{ skill.proficiency }}</span>
-                                </div>
-                                <h6 class="fw-bold mt-2">{{ skill.title }}</h6>
-                                <p class="text-muted small mb-2">{{ skill.description[:80] }}...</p>
-                                <form action="/skills/delete/{{ skill._id }}" method="POST"
-                                      onsubmit="return confirm('Delete this skill?');">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">🗑 Delete Skill</button>
-                                </form>
-                            </div>
+                    <div class="card-dark card-hover" style="border-style: dashed; padding: 20px;">
+                        <div class="flex justify-between mb-2">
+                            <span class="badge badge-info">{{ skill.category }}</span>
                         </div>
+                        <h6 class="text-primary font-semibold mb-1">{{ skill.title }}</h6>
+                        <p class="text-secondary text-sm mb-3">{{ skill.description[:60] }}...</p>
+                        <form action="/skills/delete/{{ skill._id }}" method="POST" onsubmit="return confirm('Delete this block?');">
+                            <button type="submit" class="btn btn-danger w-full" style="padding: 6px; font-size: 0.8rem;">Drop Skill</button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-muted">You have not posted any skills yet.</p>
+                <div class="text-center p-4 rounded" style="background: rgba(255,255,255,0.02); border: 1px dotted var(--border);">
+                    <p class="text-muted text-sm mb-0">No capabilities mapped to your identity.</p>
+                </div>
             {% endif %}
             {% endif %}
         </div>

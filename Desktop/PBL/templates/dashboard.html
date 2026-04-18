@@ -2,95 +2,70 @@
 {% block title %}Overview - Skillify{% endblock %}
 
 {% block content %}
-<!-- Spectacular Hero Banner -->
-<div class="hero-banner stagger-1 mb-5">
-    <div class="row align-items-center position-relative" style="z-index: 2;">
-        <div class="col-lg-8">
-            <h1 class="display-4 fw-bold mb-2">Welcome inherently, <br><span class="text-white">{{ current_user.user_name }}</span>.</h1>
-            <p class="fs-5 text-white-50 mt-3 col-md-10" style="font-family: 'Inter', sans-serif;">
-                Your verified skill exchange ecosystem is active. Manage requests, discover talent, and track your cryptographic certificates.
-            </p>
-            <div class="mt-4 pt-2">
-                {% if current_user.user_role in ['teach', 'both'] %}
-                <a href="/skills/post" class="btn-ultra btn-accent-glow me-3 border-0">
-                    <i class="fa-solid fa-layer-group me-2"></i> Publish Skill
-                </a>
-                {% endif %}
-                <a href="/browse_skills" class="btn-ultra btn-outline-ultra border-white text-white mt-3 mt-sm-0">
-                    Explore Network
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-4 text-center d-none d-lg-block">
-            <!-- Decorative isometric element -->
-            <div class="position-absolute end-0 top-50 translate-middle-y end-0 pe-5" style="opacity: 0.8; mix-blend-mode: screen;">
-                <i class="fa-brands fa-connectdevelop text-white" style="font-size: 10rem;"></i>
-            </div>
-        </div>
-    </div>
+<div class="mb-5 stagger-el fade-in">
+    <h1 style="font-size: 2.5rem; letter-spacing: -0.03em; margin-bottom: 8px;">Good morning, {{ current_user.user_name }} 👋</h1>
+    <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px;">Welcome to your peer-to-peer workspace. Manage your skills, verified sessions, and cryptographic certificates in one place.</p>
 </div>
 
-<!-- Modern Stat Grid -->
-<div class="row g-4 mb-5">
-    <!-- Stat Card 1 -->
+<h6 style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; color: var(--text-muted); margin-bottom: 16px;" class="stagger-el">Telemetry</h6>
+
+<div class="stats-grid mb-5">
     {% if current_user.user_role in ['learn', 'learner', 'both'] %}
-    <div class="col-md-6 col-xl-3 stagger-2">
-        <div class="card-glass card-hover-glow h-100 p-4">
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-primary-light text-primary p-3 rounded-circle me-3" style="width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-shapes"></i>
-                </div>
-                <h6 class="text-muted fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Requests</h6>
+    <div class="card-premium card-hover stagger-el">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 12px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                <i class="fa-solid fa-network-wired" style="font-size: 1.25rem;"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-1">My Learning</h2>
-            <p class="text-muted small mb-0">Track sessions you've joined.</p>
-            <a href="/browse_skills" class="stretched-link"></a>
+            <span class="badge badge-success">Active</span>
         </div>
+        <h2 style="font-size: 2rem; margin-bottom: 4px;">Learner</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Track your consumed sessions.</p>
     </div>
     {% endif %}
-    
-    <!-- Stat Card 2 -->
+
     {% if current_user.user_role in ['teach', 'both'] %}
-    <div class="col-md-6 col-xl-3 stagger-3">
-        <div class="card-glass card-hover-glow h-100 p-4">
-            <div class="d-flex align-items-center mb-4">
-                <div class="p-3 rounded-circle me-3" style="background-color: #ECFCCB; color: #65A30D; width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-fire"></i>
-                </div>
-                <h6 class="text-muted fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Teaching</h6>
+    <div class="card-premium card-hover stagger-el">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                <i class="fa-solid fa-chalkboard-user" style="font-size: 1.25rem;"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-1">My Offers</h2>
-            <p class="text-muted small mb-0">Manage requested skills.</p>
-            <a href="/skills/post" class="stretched-link"></a>
+            <a href="/skills/post" class="badge badge-outline" style="text-decoration: none;">+ Publish</a>
         </div>
+        <h2 style="font-size: 2rem; margin-bottom: 4px;">Provider</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Manage incoming skill requests.</p>
     </div>
     {% endif %}
-    
-    <!-- Stat Card 3 -->
-    <div class="col-md-6 col-xl-3 stagger-4">
-        <div class="card-glass card-hover-glow h-100 p-4 position-relative" style="background: linear-gradient(145deg, #09090B, #18181B); border-color: #27272A;">
-            <div class="d-flex align-items-center mb-4">
-                <div class="p-3 rounded-circle me-3 border border-dark border-opacity-50" style="background: rgba(255,255,255,0.05); color: #fff; width: 44px; height: 44px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-award"></i>
-                </div>
-                <h6 class="text-white-50 fw-bold mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Awards</h6>
+
+    <div class="card-premium card-hover stagger-el" style="background: linear-gradient(145deg, rgba(108,99,255,0.05), transparent);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div style="background: var(--accent-glow); color: var(--accent-secondary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-hover);">
+                <i class="fa-solid fa-cube" style="font-size: 1.25rem;"></i>
             </div>
-            <h2 class="fw-bold text-white mb-1">Certificates</h2>
-            <p class="text-white-50 small mb-0">Cryptographically verifiable.</p>
-            <a href="/certificates" class="stretched-link"></a>
         </div>
+        <h2 style="font-size: 2rem; margin-bottom: 4px;">Vault</h2>
+        <a href="/certificates" style="color: var(--accent-secondary); font-size: 0.9rem; font-weight: 500;">View Cryptographic Certificates <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem;"></i></a>
     </div>
-    
-    <!-- Stat Card 4 (Action / Verification) -->
+
     {% if current_user.user_role in ['teach', 'both'] %}
-    <div class="col-md-6 col-xl-3 stagger-5">
-        <div class="card-glass border-primary border-opacity-25 h-100 p-4 text-center d-flex flex-column justify-content-center align-items-center" style="background: linear-gradient(to bottom, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.1));">
-            <i class="fa-solid fa-shield-halved text-primary fs-2 mb-3"></i>
-            <h5 class="fw-bold text-dark mb-2">Unlock Mentorship</h5>
-            <p class="text-muted small mb-3">Authenticate GitHub context.</p>
-            <a href="/verify" class="btn-ultra btn-primary-ultra btn-sm px-4">Initialize</a>
-        </div>
+    <div class="card-premium stagger-el" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: transparent; border-style: dashed; padding: 32px;">
+        <i class="fa-brands fa-github" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 12px;"></i>
+        <h5 style="margin-bottom: 4px;">Increase Credibility</h5>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Verify your identity to rank higher.</p>
+        <a href="/verify" class="btn btn-primary" style="font-size: 0.8rem; padding: 8px 16px;">Verify Account</a>
     </div>
     {% endif %}
+</div>
+
+<h6 style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; color: var(--text-muted); margin-bottom: 16px;" class="stagger-el">Action Items</h6>
+
+<div class="dashboard-grid">
+    <div class="card-premium stagger-el" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+            <i class="fa-regular fa-calendar" style="color: var(--text-muted); font-size: 1.5rem;"></i>
+        </div>
+        <h4 style="margin-bottom: 8px;">No Pending Sessions</h4>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">Your schedule is clear. Explore the network to find new sessions.</p>
+        <a href="/browse_skills" class="btn btn-ghost">Browse Network</a>
+    </div>
 </div>
 {% endblock %}

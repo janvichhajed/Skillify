@@ -2,53 +2,55 @@
 {% block title %}Verify Mentorship - Skillify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <h2 class="fw-bold mb-4 text-center">Verify Your Mentorship</h2>
-        <div class="card shadow-sm p-4">
-            <p class="text-muted mb-4">
-                To maintain trust on Skillify, mentors must be verified. Submit your GitHub profile or upload certificates and portfolios below.
-            </p>
-            
+<div class="flex justify-center animate-fade-up stagger-1">
+    <div style="width: 100%; max-width: 700px;">
+        <div class="text-center mb-4">
+            <h2 class="text-primary text-2xl font-semibold">Verify Mentorship</h2>
+            <p class="text-secondary">Submit proofs to establish your credibility score.</p>
+        </div>
+
+        <div class="card-dark">
+            <!-- Simplified Progress Tabs -->
+            <div class="flex gap-2 mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                <div class="text-accent text-sm" style="font-weight: 500;"><i class="fa-solid fa-circle"></i> Identity</div>
+                <div class="text-muted" style="margin: 0 8px;">—</div>
+                <div class="text-muted text-sm"><i class="fa-regular fa-circle"></i> Verification</div>
+            </div>
+
             <form action="/verify/" method="POST">
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Skill Category</label>
-                    <select name="category" class="form-select form-select-lg" required>
-                        <option value="" disabled selected>-- Select a skill category --</option>
+                <div class="form-group">
+                    <label class="form-label text-primary">Skill Category <span class="text-danger">*</span></label>
+                    <select name="category" required>
+                        <option value="" disabled selected>-- Select category --</option>
                         <option value="Web Development">Web Development</option>
                         <option value="Data Science">Data Science</option>
                         <option value="Design">Design</option>
                         <option value="Marketing">Marketing</option>
                         <option value="Other">Other</option>
                     </select>
-                    <small class="text-muted">Select the category of the skill you want to get verified in.</small>
                 </div>
 
                 <hr>
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">1. GitHub Verification (Automated)</label>
-                    <input type="url" name="github_url" class="form-control" placeholder="https://github.com/yourusername">
-                    <small class="text-muted">We will scan your public repos and activity to establish an instant credibility score.</small>
+                <div class="form-group mb-4">
+                    <label class="form-label text-primary"><i class="fa-brands fa-github me-2"></i> 1. GitHub Verification</label>
+                    <p class="text-muted text-sm mb-2">We analyze repository activity to map credibility.</p>
+                    <input type="url" name="github_url" placeholder="https://github.com/username">
                 </div>
                 
-                <hr>
-                
-                <div class="mb-4">
-                    <label class="form-label fw-bold">2. Manual Verification Proofs</label>
+                <div class="form-group">
+                    <label class="form-label text-primary"><i class="fa-solid fa-link me-2"></i> 2. Manual Proof URLs</label>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Portfolio URL</label>
-                        <input type="url" name="portfolio_url" class="form-control" placeholder="https://yourportfolio.com">
+                    <div class="mb-2">
+                        <input type="url" name="portfolio_url" placeholder="Portfolio URL (e.g. bento.me/you)">
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Certificate Verification Link</label>
-                        <input type="url" name="cert_url" class="form-control" placeholder="e.g. Coursera, Udemy credential link">
+                    <div class="mb-2">
+                        <input type="url" name="cert_url" placeholder="Certificate Link (e.g. Credly)">
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-warning w-100 fw-bold">Submit for Verification</button>
+                <button type="submit" class="btn btn-primary w-full mt-4" style="padding: 14px;">Submit Proofs</button>
             </form>
         </div>
     </div>

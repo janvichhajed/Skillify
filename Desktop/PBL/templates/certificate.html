@@ -2,72 +2,62 @@
 {% block title %}Cryptographic Certificates - Skillify{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-5 stagger-1 flex-wrap gap-3">
+<div class="flex justify-between items-center mb-4 animate-fade-up stagger-1 flex-wrap gap-4">
     <div>
-        <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-award text-primary me-2"></i> Earned Certificates</h2>
-        <p class="text-muted small mb-0">Your cryptographically verifiable course completion credentials.</p>
+        <h2 class="text-primary text-2xl font-semibold d-flex items-center gap-2"><i class="fa-solid fa-cube text-accent"></i> Certificate Vault</h2>
+        <p class="text-secondary text-sm">Verifiable completion records.</p>
     </div>
-    <a href="/certificates/verify" class="btn-ultra btn-outline-ultra" style="white-space: nowrap;">
-        <i class="fa-solid fa-shield-check me-2"></i> Verify External
+    <a href="/certificates/verify" class="btn btn-outline">
+        <i class="fa-solid fa-shield-check"></i> Verify ID
     </a>
 </div>
 
-<div class="row g-4">
+<div class="grid grid-3 gap-4 animate-fade-up stagger-2">
     {% if certificates %}
         {% for cert in certificates %}
-        <div class="col-md-6 col-xl-4 stagger-{{ loop.index + 1 if loop.index < 5 else 5 }}">
-            <div class="card-glass card-hover-glow h-100 p-0 overflow-hidden d-flex flex-column">
-                <!-- Certificate Header/Banner -->
-                <div class="p-4 border-bottom border-light" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.15));">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="bg-white text-primary rounded-circle shadow-ultra-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="fa-solid fa-certificate"></i>
-                        </div>
-                        <span class="badge bg-white text-success border border-success border-opacity-25 shadow-ultra-sm px-2 py-1 rounded-pill" style="font-size: 0.7rem;">
-                            <i class="fa-solid fa-check-circle me-1"></i> VALID
-                        </span>
+        <div class="card-dark p-0" style="overflow: hidden; display: flex; flex-direction: column;">
+            
+            <div style="background: linear-gradient(145deg, rgba(124,58,237,0.1), rgba(10,10,15,0)); padding: 24px; border-bottom: 1px solid var(--border);">
+                <div class="flex justify-between items-center mb-4">
+                    <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-check"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-0 text-truncate" title="Skill ID: {{ cert.skill_id }}">
-                        Certificate of Completion
-                    </h5>
-                    <p class="text-primary fw-medium small mb-0 mt-1">Skill ID: <span class="font-monospace text-muted">{{ (cert.skill_id | string)[:8] if cert.skill_id else 'Unknown' }}...</span></p>
+                    <span class="badge badge-success border" style="font-size: 0.65rem;">VALID</span>
+                </div>
+                <h3 class="text-primary" style="font-size: 1.1rem; margin-bottom: 4px;">Certificate of Completion</h3>
+                <p class="text-accent text-sm font-monospace">Skill: {{ (cert.skill_id | string)[:8] if cert.skill_id else 'Unknown' }}...</p>
+            </div>
+            
+            <div style="padding: 24px; flex-grow: 1;">
+                <div class="mb-3">
+                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Issue Date</p>
+                    <p class="text-primary text-sm">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</p>
                 </div>
                 
-                <!-- Certificate Body -->
-                <div class="p-4 flex-grow-1 bg-white bg-opacity-50">
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1 text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.7rem;">Issue Date</p>
-                        <p class="fw-medium text-dark mb-0">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1 text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.7rem;">Mentor Identity</p>
-                        <p class="fw-medium text-dark mb-0 font-monospace small"><i class="fa-regular fa-user me-1 text-muted"></i> {{ (cert.mentor_id | string)[:12] if cert.mentor_id else 'Verified Mentor' }}...</p>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-top border-light">
-                        <p class="text-muted small mb-1 text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.7rem;">Credential ID</p>
-                        <code class="bg-light text-dark px-2 py-1 rounded border shadow-ultra-sm d-block text-truncate">{{ cert.certificate_id }}</code>
-                    </div>
+                <div class="mb-4">
+                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Mentor Hash</p>
+                    <p class="text-primary text-sm font-monospace">{{ (cert.mentor_id | string)[:12] if cert.mentor_id else 'Verified' }}...</p>
                 </div>
                 
-                <!-- Certificate Action -->
-                <div class="p-3 bg-white border-top border-light mt-auto">
-                    <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" class="btn-ultra btn-primary-ultra w-100 py-2" style="font-size: 0.85rem;">
-                        <i class="fa-solid fa-download me-2"></i> Download PDF
-                    </a>
+                <div style="padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px;">
+                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Credential ID</p>
+                    <code class="text-primary text-sm">{{ cert.certificate_id }}</code>
                 </div>
+            </div>
+            
+            <div style="padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-surface);">
+                <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" class="btn btn-outline w-full text-sm">
+                    <i class="fa-solid fa-download"></i> Save PDF
+                </a>
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <div class="col-12 text-center py-5 stagger-2">
-            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-ultra-sm mb-3" style="width: 80px; height: 80px; border: 1px solid rgba(0,0,0,0.05);">
-                <i class="fa-solid fa-file-contract fs-1 text-muted"></i>
-            </div>
-            <h4 class="fw-bold text-dark">No credentials found</h4>
-            <p class="text-muted col-md-6 mx-auto">You haven't earned any verified certificates yet. Complete a session and leave feedback to automatically generate your first cryptographic certificate!</p>
-            <a href="/browse_skills" class="btn-ultra btn-accent-glow mt-3">Discover Skills</a>
+        <div class="card-dark text-center flex flex-col items-center justify-center" style="grid-column: span 3; padding: 60px 20px; min-height: 300px;">
+            <i class="fa-solid fa-cube text-muted mb-4" style="font-size: 3rem; opacity: 0.5;"></i>
+            <h4 class="text-primary mb-2">Empty Vault</h4>
+            <p class="text-secondary max-w-md mx-auto mb-4">Complete your first session lifecycle to mint cryptographic certificates to your account.</p>
+            <a href="/browse_skills" class="btn btn-primary text-sm">Browse Skills</a>
         </div>
     {% endif %}
 </div>
