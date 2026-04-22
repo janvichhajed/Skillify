@@ -4,92 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SKILLIFY{% endblock %}</title>
-    
-    <!-- Fonts & Icons -->
+    <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS -->
+    <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <!-- Animated Galaxy Orbs -->
+    <!-- Background Animated Orbs -->
     <div class="bg-mesh">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- Flash Messages -->
+    <!-- Flash Messages Toast System -->
     <div class="flash-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="toast border-{{ category if category != 'danger' else 'danger' }}">
-                    {% if category == 'success' %}<i class="fa-solid fa-circle-check text-success"></i>
-                    {% elif category == 'error' or category == 'danger' %}<i class="fa-solid fa-circle-exclamation text-danger"></i>
-                    {% else %}<i class="fa-solid fa-circle-info text-accent"></i>{% endif %}
-                    <span style="font-size: 0.9rem;">{{ message }}</span>
+                <div class="flash-msg" style="border-left: 3px solid {% if category == 'success' %}var(--success){% elif category == 'danger' or category == 'error' %}var(--danger){% else %}var(--accent){% endif %};">
+                    {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
     </div>
 
-    <!-- Sticky Navbar -->
+    <!-- Glassmorphism Navbar -->
     <nav class="navbar">
-        <a class="navbar-brand" href="{{ url_for('home') }}">
-            <i class="fa-solid fa-layer-group"></i> Skillify
+        <a class="logo" href="{{ url_for('home') }}" style="text-decoration: none;">
+            <span class="base">skill</span><span class="accent">ify</span>
         </a>
+        
+        <button class="mobile-nav-toggle"><i class="fa-solid fa-bars"></i></button>
+
         <div class="nav-links">
             {% if not session.get('user_id') %}
-                <a href="{{ url_for('skill.browse_skills') }}" style="font-size: 0.95rem; margin-right: 8px;">Explore</a>
-                <a href="/certificates/verify" style="font-size: 0.95rem; margin-right: 16px;">Verify</a>
-                <a href="{{ url_for('auth.login_page') }}" class="btn btn-ghost">Log in</a>
-                <a href="{{ url_for('auth.signup_page') }}" class="btn btn-primary">Sign up</a>
+                <a href="{{ url_for('skill.browse_skills') }}" class="nav-link">Explore Area</a>
+                <a href="/certificates/verify" class="nav-link">Verify Credentials</a>
+                <a href="{{ url_for('auth.login_page') }}" class="btn btn-ghost" style="padding: 6px 16px; font-size: 13px;">Sign In</a>
+                <a href="{{ url_for('auth.signup_page') }}" class="btn btn-primary" style="padding: 6px 16px; font-size: 13px;">Join Network</a>
             {% else %}
-                <div style="display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.02); font-size: 0.85rem;">
-                    <i class="fa-solid fa-circle text-success" style="font-size: 0.5rem;"></i>
-                    <span style="color: var(--text-secondary);">{{ session.get('user_name', 'User') }}</span>
-                </div>
+                <a href="{{ url_for('profile_page') }}" class="nav-link" style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: var(--accent); border-radius: 50%; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        {{ session.get('user_name', 'U')[0] | upper }}
+                    </div>
+                    {{ session.get('user_name', 'Participant') }}
+                </a>
             {% endif %}
         </div>
     </nav>
 
-    <!-- App Wrapper -->
-    <div class="app-container">
-        
+    <!-- Content Structure -->
+    <div class="app-wrapper">
         {% if session.get('user_id') %}
         <!-- Desktop Sidebar -->
-        <aside class="sidebar">
-            <h6 class="sidebar-title">Menu</h6>
-            <a class="sidebar-link" href="{{ url_for('dashboard') }}"><i class="fa-solid fa-border-all" style="width: 20px;"></i> Overview</a>
-            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}"><i class="fa-solid fa-magnifying-glass" style="width: 20px;"></i> Discover</a>
-            <a class="sidebar-link" href="/certificates/verify"><i class="fa-solid fa-shield-check" style="width: 20px;"></i> Verify Node</a>
-            
-            <h6 class="sidebar-title" style="margin-top: 24px;">Settings</h6>
-            <a class="sidebar-link" href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user-astronaut" style="width: 20px;"></i> Profile Identity</a>
-            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="color: var(--danger);"><i class="fa-solid fa-arrow-right-from-bracket" style="width: 20px;"></i> Disconnect</a>
+        <aside class="sidebar fade-in">
+            <h6 class="section-heading">Application</h6>
+            <a class="sidebar-link" href="{{ url_for('dashboard') }}">
+                <i class="fa-solid fa-layer-group" style="width: 16px; text-align: center;"></i> Overview
+            </a>
+            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}">
+                <i class="fa-solid fa-magnifying-glass" style="width: 16px; text-align: center;"></i> Directory
+            </a>
+            <a class="sidebar-link" href="/certificates/verify">
+                <i class="fa-solid fa-shield-check" style="width: 16px; text-align: center;"></i> Validator
+            </a>
+
+            <h6 class="section-heading" style="margin-top: 24px;">Personal</h6>
+            <a class="sidebar-link" href="{{ url_for('profile_page') }}">
+                <i class="fa-solid fa-user" style="width: 16px; text-align: center;"></i> Identity
+            </a>
+            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="color: var(--danger);">
+                <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px; text-align: center;"></i> Disconnect
+            </a>
         </aside>
 
-        <!-- Mobile Bottom Nav -->
+        <!-- Mobile Nav Replacement -->
         <nav class="bottom-nav">
-            <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-border-all"></i><span>Home</span></a>
-            <a href="{{ url_for('skill.browse_skills') }}"><i class="fa-solid fa-magnifying-glass"></i><span>Explore</span></a>
+            <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-layer-group"></i><span>Home</span></a>
+            <a href="{{ url_for('skill.browse_skills') }}"><i class="fa-solid fa-magnifying-glass"></i><span>Look</span></a>
             <a href="/certificates/verify"><i class="fa-solid fa-shield-check"></i><span>Verify</span></a>
-            <a href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+            <a href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user"></i><span>Me</span></a>
         </nav>
         {% endif %}
 
-        <!-- Main Workspace -->
-        <main class="main-content fade-in">
+        <!-- Main Dynamic Viewport -->
+        <main class="main-content">
             {% block content %}{% endblock %}
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -2,70 +2,59 @@
 {% block title %}Overview - Skillify{% endblock %}
 
 {% block content %}
-<div class="mb-5 stagger-el fade-in">
-    <h1 style="font-size: 2.5rem; letter-spacing: -0.03em; margin-bottom: 8px;">Good morning, {{ current_user.user_name }} 👋</h1>
-    <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 600px;">Welcome to your peer-to-peer workspace. Manage your skills, verified sessions, and cryptographic certificates in one place.</p>
+<div class="fade-in mb-4 pb-2" style="border-bottom: 1px solid var(--border);">
+    <p style="font-size: 13px; color: var(--t2); margin-bottom: 4px;">Good morning,</p>
+    <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px; margin-bottom: 16px;">Welcome back, {{ current_user.user_name }} 👋</h1>
 </div>
 
-<h6 style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; color: var(--text-muted); margin-bottom: 16px;" class="stagger-el">Telemetry</h6>
+<h6 class="section-heading fade-in">Telemetry Data</h6>
 
-<div class="stats-grid mb-5">
+<div class="stats-row fade-in">
     {% if current_user.user_role in ['learn', 'learner', 'both'] %}
-    <div class="card-premium card-hover stagger-el">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-            <div style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 12px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
-                <i class="fa-solid fa-network-wired" style="font-size: 1.25rem;"></i>
-            </div>
-            <span class="badge badge-success">Active</span>
-        </div>
-        <h2 style="font-size: 2rem; margin-bottom: 4px;">Learner</h2>
-        <p style="color: var(--text-secondary); font-size: 0.9rem;">Track your consumed sessions.</p>
+    <div class="card stat-card">
+        <i class="fa-solid fa-book-open" style="color: var(--t2); margin-bottom: 12px; font-size: 16px;"></i>
+        <h6 class="section-heading" style="margin-bottom: 4px;">Learning Node</h6>
+        <div style="font-size: 26px; font-weight: 500; color: var(--t1); margin-bottom: 4px;">Active</div>
+        <div style="font-size: 12px; color: var(--success);"><i class="fa-solid fa-arrow-trend-up"></i> Nominal</div>
     </div>
     {% endif %}
 
     {% if current_user.user_role in ['teach', 'both'] %}
-    <div class="card-premium card-hover stagger-el">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-            <div style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.2);">
-                <i class="fa-solid fa-chalkboard-user" style="font-size: 1.25rem;"></i>
-            </div>
-            <a href="/skills/post" class="badge badge-outline" style="text-decoration: none;">+ Publish</a>
-        </div>
-        <h2 style="font-size: 2rem; margin-bottom: 4px;">Provider</h2>
-        <p style="color: var(--text-secondary); font-size: 0.9rem;">Manage incoming skill requests.</p>
+    <div class="card stat-card">
+        <i class="fa-solid fa-chalkboard-user" style="color: var(--t2); margin-bottom: 12px; font-size: 16px;"></i>
+        <h6 class="section-heading" style="margin-bottom: 4px;">Provider State</h6>
+        <div style="font-size: 26px; font-weight: 500; color: var(--t1); margin-bottom: 4px;">Ready</div>
+        <a href="/skills/post" style="font-size: 12px; color: var(--accent2);">+ Publish Skill</a>
     </div>
     {% endif %}
 
-    <div class="card-premium card-hover stagger-el" style="background: linear-gradient(145deg, rgba(108,99,255,0.05), transparent);">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-            <div style="background: var(--accent-glow); color: var(--accent-secondary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-hover);">
-                <i class="fa-solid fa-cube" style="font-size: 1.25rem;"></i>
-            </div>
-        </div>
-        <h2 style="font-size: 2rem; margin-bottom: 4px;">Vault</h2>
-        <a href="/certificates" style="color: var(--accent-secondary); font-size: 0.9rem; font-weight: 500;">View Cryptographic Certificates <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem;"></i></a>
+    <div class="card stat-card" style="background: linear-gradient(135deg, rgba(124,111,255,0.06), transparent); border-color: rgba(124,111,255,0.15);">
+        <i class="fa-solid fa-cube" style="color: var(--accent2); margin-bottom: 12px; font-size: 16px;"></i>
+        <h6 class="section-heading" style="margin-bottom: 4px;">Certificates</h6>
+        <div style="font-size: 26px; font-weight: 500; color: var(--accent2); margin-bottom: 4px;">Vault</div>
+        <a href="/certificates" style="font-size: 12px; color: var(--t2);">Access Ledger →</a>
     </div>
-
-    {% if current_user.user_role in ['teach', 'both'] %}
-    <div class="card-premium stagger-el" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: transparent; border-style: dashed; padding: 32px;">
-        <i class="fa-brands fa-github" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 12px;"></i>
-        <h5 style="margin-bottom: 4px;">Increase Credibility</h5>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Verify your identity to rank higher.</p>
-        <a href="/verify" class="btn btn-primary" style="font-size: 0.8rem; padding: 8px 16px;">Verify Account</a>
-    </div>
-    {% endif %}
 </div>
 
-<h6 style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; color: var(--text-muted); margin-bottom: 16px;" class="stagger-el">Action Items</h6>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;" class="fade-in">
+    <h6 class="section-heading" style="margin-bottom: 0;">System Actions</h6>
+</div>
 
-<div class="dashboard-grid">
-    <div class="card-premium stagger-el" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
-        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <i class="fa-regular fa-calendar" style="color: var(--text-muted); font-size: 1.5rem;"></i>
-        </div>
-        <h4 style="margin-bottom: 8px;">No Pending Sessions</h4>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">Your schedule is clear. Explore the network to find new sessions.</p>
-        <a href="/browse_skills" class="btn btn-ghost">Browse Network</a>
+<div class="dash-skills-grid fade-in">
+    {% if current_user.user_role in ['teach', 'both'] %}
+    <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-style: dashed; padding: 32px;">
+        <i class="fa-brands fa-github" style="font-size: 24px; color: var(--t2); margin-bottom: 12px;"></i>
+        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">Establish Trust</h4>
+        <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px;">Increase network credibility score.</p>
+        <a href="/verify" class="btn btn-ghost" style="padding: 6px 14px; font-size: 13px;">Verify Account</a>
+    </div>
+    {% endif %}
+
+    <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 32px;">
+        <i class="fa-regular fa-calendar-xmark" style="font-size: 24px; color: var(--t3); margin-bottom: 12px;"></i>
+        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">Empty Queue</h4>
+        <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px;">No upcoming sessions.</p>
+        <a href="/browse_skills" class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;">Find Nodes</a>
     </div>
 </div>
 {% endblock %}

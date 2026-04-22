@@ -1,48 +1,76 @@
 {% extends 'base.html' %}
-{% block title %}Verify Certificate - Skillify{% endblock %}
+{% block title %}Verify Validation - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-center animate-fade-up stagger-1">
-    <div style="width: 100%; max-width: 600px;">
-        <div class="text-center mb-4">
-            <h2 class="text-primary text-2xl font-semibold">Verify Authenticity</h2>
-            <p class="text-secondary text-sm">Check credential blocks against the network.</p>
-        </div>
+<style>
+    /* Draw Check Animation */
+    .draw-check {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: draw-check 0.8s ease-out forwards;
+        animation-delay: 0.2s;
+    }
+    @keyframes draw-check { to { stroke-dashoffset: 0; } }
+    
+    /* Shake Animation */
+    .shake {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+        0%,100%{transform:translateX(0)}
+        20%{transform:translateX(-8px)}
+        40%{transform:translateX(8px)}
+        60%{transform:translateX(-5px)}
+        80%{transform:translateX(5px)}
+    }
+    
+    .verify-input {
+        background: var(--bg); font-family: monospace; font-size: 24px; padding: 24px; text-align: center; letter-spacing: 4px; border: 1px solid rgba(124,111,255,0.4); border-radius: 12px; color: var(--t1); width: 100%; outline: none; margin-bottom: 24px; transition: box-shadow 0.3s;
+    }
+    .verify-input:focus { box-shadow: 0 0 0 4px var(--glow); }
+</style>
 
-        <div class="glass-card mb-4" style="padding: 32px;">
-            <form action="/certificates/verify" method="POST">
-                <div class="search-wrapper w-full mb-4" style="padding-left: 16px;">
-                    <i class="fa-solid fa-fingerprint text-accent"></i>
-                    <input type="text" name="certificate_id" class="search-input text-center" placeholder="XXX-XXX-XXX" required style="font-family: monospace; letter-spacing: 2px;">
-                </div>
-                <button type="submit" class="btn btn-primary w-full">Verify Network Node</button>
-            </form>
-        </div>
+<div class="fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <div style="width: 100%; max-width: 500px; text-align: center;">
+        
+        <i class="fa-solid fa-fingerprint" style="font-size: 40px; color: var(--accent2); margin-bottom: 24px;"></i>
+        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px; margin-bottom: 8px;">Network Scanner</h1>
+        <p style="font-size: 13px; color: var(--t2); margin-bottom: 32px;">Input credential hash block to authenticate against the node registry.</p>
+
+        <form action="/certificates/verify" method="POST" class="mb-5">
+            <input type="text" name="certificate_id" class="verify-input" placeholder="XXXX-XXXX-XXXX" required>
+            <button class="btn btn-primary" type="submit" style="width: 100%; padding: 16px; font-size: 15px;">Authenticate Signature</button>
+        </form>
 
         {% if result %}
-        <div id="verifyResultArea" data-has-result="true" class="result-box mt-4">
+        <div style="margin-top: 40px;">
             {% if result == "Valid Certificate" %}
-                <div class="card-dark border" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); text-center: center;">
-                    <div class="text-center mb-4">
-                        <i class="fa-solid fa-shield-check text-success" style="font-size: 3rem;"></i>
-                        <h3 class="text-success mt-3 font-semibold">Verified Authentic</h3>
-                        <p class="text-secondary text-sm mt-1">Found matching nodes in the system registry.</p>
-                    </div>
-                    <div style="background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-                        <p class="text-muted text-xs uppercase mb-1">Credential Hash</p>
-                        <h4 class="text-primary font-monospace">{{ cert_data.certificate_id }}</h4>
-                        <p class="text-muted text-sm mt-2">Issued: {{ cert_data.issue_date }}</p>
+                <div class="card fade-in" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); padding: 32px;">
+                    <!-- Draw SVG Check -->
+                    <svg viewBox="0 0 52 52" style="width: 48px; height: 48px; margin-bottom: 16px;">
+                        <circle cx="26" cy="26" r="25" fill="none" stroke="#34d399" stroke-width="2"/>
+                        <path class="draw-check" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                    
+                    <h3 style="font-size: 18px; color: var(--success); margin-bottom: 8px;">Hash Validated ✅</h3>
+                    <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px;">The certificate block natively exists on the ledger.</p>
+                    
+                    <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px;">
+                        <h6 class="section-heading" style="margin-bottom: 4px;">Metadata Array</h6>
+                        <div style="font-family: monospace; font-size: 14px; color: var(--accent2);">{{ cert_data.certificate_id }}</div>
+                        <div style="font-size: 11px; color: var(--t3); margin-top: 4px;">Timestamp: {{ cert_data.issue_date }}</div>
                     </div>
                 </div>
             {% else %}
-                <div class="card-dark border text-center" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); padding: 40px 20px;">
-                    <i class="fa-solid fa-triangle-exclamation text-danger mb-3" style="font-size: 3rem;"></i>
-                    <h3 class="text-danger font-semibold">Invalid Credential</h3>
-                    <p class="text-secondary text-sm mt-2">The submitted hash block could not be found or verified.</p>
+                <div class="card shake" style="background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.2); padding: 32px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--danger); margin-bottom: 16px;"></i>
+                    <h3 style="font-size: 18px; color: var(--danger); margin-bottom: 8px;">Validation Failure ⚠️</h3>
+                    <p style="font-size: 12px; color: var(--t2); margin-bottom: 0;">This hash block returned absolutely zero nodes. Connection voided.</p>
                 </div>
             {% endif %}
         </div>
         {% endif %}
+
     </div>
 </div>
 {% endblock %}

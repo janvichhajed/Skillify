@@ -2,52 +2,51 @@
 {% block title %}Log in - Skillify{% endblock %}
 
 {% block content %}
-<!-- Note: We break out of `.main-content` padding limits for edge-to-edge layout via CSS overrides -->
 <style>
+    /* Reset main padding to allow edge-to-edge split */
     .main-content { padding: 0 !important; max-width: none !important; }
 </style>
 
 <div class="auth-split">
-    <!-- Left Art Panel -->
-    <div class="auth-art fade-in">
-        <div style="position: relative; z-index: 2;">
-            <i class="fa-solid fa-layer-group" style="color: var(--accent-secondary); font-size: 3rem; margin-bottom: 24px;"></i>
-            <h1 style="font-size: 3.5rem; line-height: 1.1; margin-bottom: 24px; color: #fff;">Build.<br>Share.<br>Scale.</h1>
-            <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 400px;">Join the elite peer-to-peer ecosystem where verification meets mentorship.</p>
-        </div>
+    <!-- Left Visual Panel -->
+    <div class="auth-bg">
+        <!-- Abstract gradient mesh matching the orb design for depth -->
+        <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; background: radial-gradient(circle at 30% 70%, rgba(124,111,255,0.1), transparent 50%), radial-gradient(circle at 70% 30%, rgba(167,139,250,0.08), transparent 40%);"></div>
+        <p class="fade-in">Exchange skills.<br>Grow together.</p>
     </div>
     
-    <!-- Right Form Panel -->
-    <div class="auth-form-container">
-        <div class="card-premium auth-card fade-in">
-            <div style="margin-bottom: 32px;">
-                <h2 style="font-size: 1.75rem; margin-bottom: 8px;">Access Node</h2>
-                <p style="color: var(--text-secondary); font-size: 0.95rem;">Enter credential payload to continue to the application.</p>
+    <!-- Right Data Panel -->
+    <div class="auth-form-wrap">
+        <div class="auth-form-panel fade-in">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div class="logo" style="margin-bottom: 12px;">
+                    <span class="base">skill</span><span class="accent">ify</span>
+                </div>
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 6px;">Sign in</h2>
+                <p style="font-size: 13px; color: var(--t2);">Enter your details to access the network.</p>
             </div>
 
             {% if error %}
-            <div class="badge badge-danger" style="display: flex; width: 100%; padding: 12px; justify-content: center; margin-bottom: 24px; font-size: 0.85rem; border-radius: 8px;">
-                <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
-            </div>
+            <div class="pill pill-error"><i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> {{ error }}</div>
             {% endif %}
             
             <form action="/auth/login" method="POST">
-                <div class="form-floating">
-                    <input type="email" name="email" id="emailInput" class="form-control" placeholder=" " required>
-                    <label for="emailInput" class="form-label">Email Address</label>
+                <div class="form-group">
+                    <label class="field-label" for="emailInput">Email Address</label>
+                    <input type="email" name="email" id="emailInput" class="form-control" placeholder="name@example.com" required>
                 </div>
                 
-                <div class="form-floating">
-                    <input type="password" name="password" id="passwordInput" class="form-control" placeholder=" " required>
-                    <label for="passwordInput" class="form-label">Network Password</label>
+                <div class="form-group" style="margin-bottom: 32px;">
+                    <label class="field-label" for="passwordInput">Password</label>
+                    <input type="password" name="password" id="passwordInput" class="form-control" placeholder="••••••••" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; padding: 14px;">Initialize Session</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
             </form>
             
-            <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
-                <span style="color: var(--text-secondary); font-size: 0.9rem;">No node identity?</span> 
-                <a href="{{ url_for('auth.signup_page') }}" style="color: var(--text-primary); font-weight: 500; font-size: 0.9rem; margin-left: 4px;">Provision Account</a>
+            <div style="margin-top: 32px; text-align: center; color: var(--t2); font-size: 13px;">
+                <span>Don't have an account?</span> 
+                <a href="{{ url_for('auth.signup_page') }}" style="color: var(--t1); font-weight: 500; margin-left: 4px;">Sign up instead</a>
             </div>
         </div>
     </div>

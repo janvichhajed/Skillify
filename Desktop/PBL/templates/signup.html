@@ -1,53 +1,140 @@
 {% extends 'base.html' %}
-{% block title %}Sign up - Skillify{% endblock %}
+{% block title %}Sign Up - Skillify{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-panel animate-fade-up">
-        <div class="glass-card">
-            <div class="text-center mb-4">
-                <i class="fa-solid fa-layer-group text-accent mb-3" style="font-size: 2.5rem;"></i>
-                <h2>Create Account</h2>
-                <p class="text-secondary text-sm">Join the platform to verify and exchange skills.</p>
+<style>
+    .main-content { padding: 0 !important; max-width: none !important; }
+    
+    /* Glorified Art Panel */
+    .signup-art-bg {
+        flex: 1.2;
+        background: var(--bg2);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+        border-right: 1px solid var(--border);
+    }
+    .grid-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        z-index: 1;
+        mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+        -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+    }
+    .value-prop {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        background: rgba(255,255,255,0.02);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+    }
+    .value-icon {
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        background: rgba(124,111,255,0.1);
+        color: var(--accent2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px;
+    }
+</style>
+
+<div class="auth-split">
+    <!-- Left Art Panel (Glorified) -->
+    <div class="signup-art-bg fade-in">
+        <div class="grid-overlay"></div>
+        <div style="position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%); top: -100px; left: -100px; filter: blur(60px); z-index: 0;"></div>
+        
+        <div style="position: relative; z-index: 2; max-width: 480px; margin: 0 auto;">
+            <div class="logo" style="margin-bottom: 24px; font-size: 24px;">
+                <span class="base">skill</span><span class="accent">ify</span>
+            </div>
+            
+            <h1 style="font-size: 3rem; line-height: 1.1; margin-bottom: 16px; color: #fff;">Join the elite<br>skill network.</h1>
+            <p style="color: var(--t2); font-size: 1.1rem; margin-bottom: 40px;">Gain access to verified mentors, cryptographic credentials, and peer-to-peer growth.</p>
+            
+            <!-- Value Props -->
+            <div class="value-prop">
+                <div class="value-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 2px;">Verified Node Protocol</h4>
+                    <p style="font-size: 12px; color: var(--t2); margin: 0;">We authenticate all peers via GitHub and credentials.</p>
+                </div>
+            </div>
+            
+            <div class="value-prop">
+                <div class="value-icon" style="background: rgba(16,185,129,0.1); color: var(--success);"><i class="fa-solid fa-cube"></i></div>
+                <div>
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 2px;">Cryptographic Vault</h4>
+                    <p style="font-size: 12px; color: var(--t2); margin: 0;">Earn and issue verifiable completion certificates.</p>
+                </div>
+            </div>
+
+            <!-- Avatar Stack -->
+            <div style="margin-top: 40px; display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; gap: -10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--t3); border: 2px solid var(--bg2); z-index: 3;"></div>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--t2); border: 2px solid var(--bg2); z-index: 2; margin-left: -12px;"></div>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg2); z-index: 1; margin-left: -12px;"></div>
+                </div>
+                <span style="font-size: 12px; color: var(--t2); font-weight: 500;">Join 2,400+ secured nodes</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Data Panel -->
+    <div class="auth-form-wrap">
+        <div class="auth-form-panel fade-in">
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 6px;">Create Account</h2>
+                <p style="font-size: 13px; color: var(--t2);">Initialize your identity on the network.</p>
             </div>
 
             {% if error %}
-            <div class="alert badge-danger w-full text-center p-3 mb-4 rounded border">
-                <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
-            </div>
+            <div class="pill pill-error"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i> {{ error }}</div>
             {% endif %}
             
             <form action="/auth/signup" method="POST">
-                <div class="form-group form-floating">
-                    <input type="text" name="name" id="nameInput" placeholder=" " required>
-                    <label for="nameInput">Full Name</label>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="field-label" for="nameInput">Full Name</label>
+                    <input type="text" name="name" id="nameInput" class="form-control" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="field-label" for="emailInput">Email Address</label>
+                    <input type="email" name="email" id="emailInput" class="form-control" placeholder="name@example.com" required>
                 </div>
                 
-                <div class="form-group form-floating">
-                    <input type="email" name="email" id="emailInput" placeholder=" " required>
-                    <label for="emailInput">Email address</label>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="field-label" for="passwordInput">Network Password</label>
+                    <input type="password" name="password" id="passwordInput" class="form-control" placeholder="••••••••" required>
                 </div>
-                
-                <div class="form-group form-floating">
-                    <input type="password" name="password" id="passwordInput" placeholder=" " required>
-                    <label for="passwordInput">Password</label>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">I am looking to...</label>
-                    <select name="role" required>
-                        <option value="learn">Learn a skill</option>
-                        <option value="teach">Teach a skill</option>
-                        <option value="both" selected>Both</option>
+
+                <div class="form-group" style="margin-bottom: 32px;">
+                    <label class="field-label" for="roleSelect">Node Classification</label>
+                    <select name="role" id="roleSelect" class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238888aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto;">
+                        <option value="learn" style="background: var(--bg3);">Learn a skill (Consumer)</option>
+                        <option value="teach" style="background: var(--bg3);">Teach a skill (Provider)</option>
+                        <option value="both" selected style="background: var(--bg3);">Both (Hybrid Node)</option>
                     </select>
                 </div>
                 
-                <button type="submit" class="btn btn-primary w-full mt-2">Create Account</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Provision Account</button>
             </form>
             
-            <div class="text-center mt-4 pt-3" style="border-top: 1px solid var(--border);">
-                <span class="text-secondary text-sm">Already have an account?</span> 
-                <a href="{{ url_for('auth.login_page') }}" class="text-primary text-sm" style="font-weight: 500; margin-left: 4px;">Sign in</a>
+            <div style="margin-top: 32px; text-align: center; color: var(--t2); font-size: 13px;">
+                <span>Already mapped to a node?</span> 
+                <a href="{{ url_for('auth.login_page') }}" style="color: var(--t1); font-weight: 500; margin-left: 4px;">Sign in</a>
             </div>
         </div>
     </div>

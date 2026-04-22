@@ -1,75 +1,145 @@
 {% extends 'base.html' %}
-{% block title %}Session Overview - Skillify{% endblock %}
+{% block title %}Session View - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-center animate-fade-up stagger-1">
-    <div style="width: 100%; max-width: 600px;">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-primary text-xl">Session View</h2>
-            <span class="badge 
-                {% if session_data.status == 'pending' %}badge-warning
-                {% elif session_data.status == 'accepted' %}badge-info
-                {% else %}badge-success{% endif %}" style="padding: 6px 12px;">
-                {{ session_data.status | title }}
-            </span>
+<style>
+    .timeline {
+        border-left: 1px solid var(--border2);
+        margin-left: 12px;
+        padding-left: 24px;
+        position: relative;
+    }
+    .timeline-dot {
+        position: absolute;
+        left: -5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--accent);
+    }
+    .timeline-item {
+        margin-bottom: 32px;
+        position: relative;
+    }
+    
+    .timeline-item.active .timeline-dot {
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .timeline-item.success .timeline-dot {
+        border-color: var(--success);
+        background: var(--success);
+    }
+    .timeline-item.warning .timeline-dot {
+        border-color: var(--warning);
+        background: var(--warning);
+    }
+    
+    .tab-pill {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        background: var(--bg3);
+        color: var(--t2);
+        border: 1px solid var(--border);
+        cursor: default;
+    }
+    .tab-pill.active {
+        background: var(--glow);
+        color: var(--accent2);
+        border-color: var(--border2);
+    }
+</style>
+
+<div class="fade-in mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h6 class="section-heading">Transmission #{{ (session_data._id | string)[:10] }}...</h6>
+            <h1 style="font-size: 24px; font-weight: 600; color: var(--t1);">Session Pipeline</h1>
         </div>
         
-        <div class="card-dark border-accent p-4 mb-4">
-            <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-                ID: {{ session_data._id }}
-            </div>
+        <span class="pill 
+            {% if session_data.status == 'pending' %}pill-pending
+            {% elif session_data.status == 'accepted' %}pill-category
+            {% else %}pill-completed{% endif %}">
+            {{ session_data.status | title }} Node
+        </span>
+    </div>
+</div>
 
-            <div class="grid grid-2 gap-4 mb-4" style="font-size: 0.9rem;">
-                <div>
-                    <span class="text-muted flex block mb-1">Scheduled Date</span>
-                    <span class="text-primary">{{ session_data.scheduled_at }}</span>
-                </div>
-                <div>
-                    <span class="text-muted flex block mb-1">Created At</span>
-                    <span class="text-primary">{{ session_data.created_at }}</span>
-                </div>
-            </div>
+<div class="card fade-in" style="max-width: 600px;">
+    
+    <div style="display: flex; gap: 12px; margin-bottom: 32px;">
+        <div class="tab-pill">Status Tracker</div>
+        <div class="tab-pill active">Timeline</div>
+    </div>
+
+    <div class="timeline">
+        <!-- Initialized -->
+        <div class="timeline-item success">
+            <div class="timeline-dot" style="top: 6px;"></div>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Request Initialized</h4>
+            <p style="font-size: 12px; color: var(--t2);">Block created on {{ session_data.created_at }}</p>
+        </div>
+
+        <!-- Acceptance Phase -->
+        <div class="timeline-item {% if session_data.status == 'pending' %}warning{% elif session_data.status in ['accepted', 'completed'] %}success{% endif %}">
+            <div class="timeline-dot" style="top: 6px;"></div>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Provider Acceptance</h4>
             
-            <hr>
-
             {% if session_data.status == 'pending' %}
-                <div class="card-dark" style="background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); margin-top: 16px; padding: 16px;">
-                    <p class="text-warning text-sm mb-0"><i class="fa-solid fa-hourglass-half"></i> Waiting for Mentor to accept.</p>
-                </div>
-
+                <p style="font-size: 12px; color: var(--warning); margin-bottom: 12px;">Waiting for external node acknowledgment.</p>
                 {% if current_user.user_id == session_data.provider_id %}
-                    <form action="/sessions/{{ session_data._id }}/accept" method="POST" class="mt-4">
-                        <button type="submit" class="btn btn-success w-full">Accept Session</button>
+                    <form action="/sessions/{{ session_data._id }}/accept" method="POST">
+                        <button type="submit" class="btn btn-ghost" style="color: var(--success); border-color: rgba(16,185,129,0.3); padding: 6px 12px; font-size: 12px;">Acknowledge & Sync</button>
                     </form>
                 {% endif %}
-                
-            {% elif session_data.status == 'accepted' %}
-                <div class="card-dark" style="background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.2); margin-top: 16px; padding: 16px;">
-                    <p class="text-info text-sm mb-0"><i class="fa-solid fa-tower-broadcast"></i> Session is currently active.</p>
-                </div>
-                
-                <form action="/sessions/{{ session_data._id }}/complete" method="POST" class="mt-4">
-                    <button type="submit" class="btn btn-primary w-full">Mark as Completed</button>
-                </form>
-                
-            {% elif session_data.status == 'completed' %}
-                <div class="card-dark" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); margin-top: 16px; padding: 16px;">
-                    <p class="text-success text-sm mb-0"><i class="fa-solid fa-square-check"></i> Finished on {{ session_data.completed_at }}</p>
-                </div>
-                
-                <div class="mt-4 flex flex-col gap-2">
-                {% if current_user.user_id == session_data.requester_id and not session_data.feedback_given %}
-                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-warning w-full">Leave Feedback</a>
-                {% elif session_data.feedback_given and not session_data.certificate_issued %}
-                    <form action="/certificates/generate/{{ session_data._id }}" method="POST">
-                        <button type="submit" class="btn btn-accent w-full" style="background: var(--bg-hover); color: var(--accent-glow); border: 1px solid var(--border-accent);">Generate Certificate</button>
-                    </form>
-                {% elif session_data.certificate_issued %}
-                    <button class="btn btn-outline w-full" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa-solid fa-lock"></i> Certificate Issued</button>
-                {% endif %}
-                </div>
+            {% else %}
+                <p style="font-size: 12px; color: var(--t2);">Node connection successfully established.</p>
             {% endif %}
         </div>
+        
+        <!-- Execution Phase -->
+        {% if session_data.status in ['accepted', 'completed'] %}
+        <div class="timeline-item {% if session_data.status == 'accepted' %}active{% else %}success{% endif %}">
+            <div class="timeline-dot" style="top: 6px;"></div>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Data Transmission</h4>
+            
+            {% if session_data.status == 'accepted' %}
+                <p style="font-size: 12px; color: var(--accent2); margin-bottom: 12px;">Session live. Communicate with peer and conclude when finished.</p>
+                <form action="/sessions/{{ session_data._id }}/complete" method="POST">
+                    <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Finalize Process</button>
+                </form>
+            {% else %}
+                <p style="font-size: 12px; color: var(--t2);">Process terminated successfully on {{ session_data.completed_at }}.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Wrap Up Phase -->
+        {% if session_data.status == 'completed' %}
+        <div class="timeline-item active">
+            <div class="timeline-dot" style="top: 6px;"></div>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Certificate Generation</h4>
+            
+            <div style="margin-top: 12px;">
+                {% if current_user.user_id == session_data.requester_id and not session_data.feedback_given %}
+                    <p style="font-size: 12px; color: var(--warning); margin-bottom: 12px;">Node feedback required to execute smart contract.</p>
+                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-ghost" style="color: var(--warning); border-color: rgba(245, 158, 11, 0.3); padding: 6px 12px; font-size: 12px;">Write Feedback Payload</a>
+                {% elif session_data.feedback_given and not session_data.certificate_issued %}
+                    <p style="font-size: 12px; color: var(--accent2); margin-bottom: 12px;">Conditions met. Ready for minting.</p>
+                    <form action="/certificates/generate/{{ session_data._id }}" method="POST">
+                        <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-cube" style="margin-right: 6px;"></i> Mint Certificate</button>
+                    </form>
+                {% elif session_data.certificate_issued %}
+                    <div class="pill pill-completed"><i class="fa-solid fa-lock"></i> Certificate Secured in Vault</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     </div>
+
 </div>
 {% endblock %}

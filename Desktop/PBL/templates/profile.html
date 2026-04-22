@@ -1,77 +1,191 @@
 {% extends 'base.html' %}
-{% block title %}Profile - Skillify{% endblock %}
+{% block title %}Identity Profile - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-center animate-fade-up">
-    <div style="width: 100%; max-width: 800px;">
-        <div class="card-dark mb-4">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="avatar-circle">
-                    {{ current_user.user_name[0] | upper }}
+<style>
+    /* Premium Identity Layout */
+    .identity-header {
+        background: linear-gradient(135deg, rgba(124,111,255,0.15) 0%, transparent 100%), 
+                    radial-gradient(circle at top right, rgba(167,139,250,0.1) 0%, transparent 60%);
+        height: 160px;
+        border-radius: 16px 16px 0 0;
+        border: 1px solid var(--border);
+        border-bottom: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .identity-header::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 20px 20px;
+        z-index: 0;
+    }
+    
+    .identity-body {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 0 0 16px 16px;
+        padding: 32px 40px;
+        position: relative;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .identity-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        font-size: 40px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid var(--bg3);
+        box-shadow: 0 0 0 1px var(--border2), 0 0 30px var(--glow);
+        position: absolute;
+        top: -50px;
+        left: 40px;
+        z-index: 10;
+    }
+    
+    .identity-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 40px;
+        margin-top: 50px; /* offset avatar */
+    }
+    
+    .stat-badge {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        background: rgba(255,255,255,0.02);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .identity-grid { grid-template-columns: 1fr; margin-top: 60px; }
+        .identity-avatar { left: 50%; transform: translateX(-50%); }
+        .identity-body { padding: 24px; text-align: center; }
+        .stat-badge { text-align: left; }
+    }
+</style>
+
+<div class="fade-in mb-4" style="display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h6 class="section-heading">User Identity</h6>
+        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px;">Network Profile</h1>
+    </div>
+</div>
+
+<div class="fade-in" style="max-width: 1000px;">
+    <!-- Banner Header -->
+    <div class="identity-header"></div>
+    
+    <!-- Profile Body -->
+    <div class="identity-body">
+        <div class="identity-avatar">{{ current_user.user_name[0] | upper }}</div>
+        
+        <div class="identity-grid">
+            
+            <!-- Left Column: Core Identity stats -->
+            <div>
+                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">{{ current_user.user_name }}</h2>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 32px;">
+                    <span class="pill pill-category">{{ current_user.user_role | title }} Node</span>
                 </div>
-                <div>
-                    <h3 class="text-primary text-xl font-semibold mb-1">{{ current_user.user_name }}</h3>
-                    <p class="text-secondary text-sm mb-2"><span class="badge badge-info">{{ current_user.user_role | title }} Account</span></p>
-                    
-                    {% if user and user.credibility_score %}
-                        <span class="badge badge-warning"><i class="fa-solid fa-star me-1"></i> Credibility: {{ user.credibility_score }}</span>
+                
+                <h6 class="section-heading">Integrity Metrics</h6>
+                
+                <div class="stat-badge">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3); margin-bottom: 8px;">Credibility Score</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        {% if user and user.credibility_score %}
+                            <i class="fa-solid fa-star" style="color: var(--warning); font-size: 20px;"></i>
+                            <span style="font-size: 24px; font-weight: 600; color: var(--t1);">{{ user.credibility_score }}</span>
+                        {% else %}
+                            <i class="fa-regular fa-star" style="color: var(--t3); font-size: 20px;"></i>
+                            <span style="font-size: 24px; font-weight: 600; color: var(--t3);">0</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="stat-badge" style="{% if user and user.verified %}border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.05);{% endif %}">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3); margin-bottom: 8px;">Trust Status</span>
+                    {% if user and user.verified %}
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-shield-check" style="color: var(--success); font-size: 20px;"></i>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--success);">Verified Protocol</div>
+                                <div style="font-size: 11px; color: var(--t2);">Full network privileges.</div>
+                            </div>
+                        </div>
                     {% else %}
-                        <span class="badge badge-warning text-dark"><i class="fa-regular fa-star me-1"></i> Credibility: 0</span>
+                        <div style="display: flex; align-items: flex-start; gap: 8px;">
+                            <i class="fa-solid fa-shield" style="color: var(--t3); font-size: 20px;"></i>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--t1);">Unverified</div>
+                                <div style="font-size: 11px; color: var(--t2); margin-bottom: 8px;">Provide proofs to authenticate.</div>
+                                <a href="/verify/" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;">Verify Identity</a>
+                            </div>
+                        </div>
                     {% endif %}
                 </div>
             </div>
-
-            <hr>
-
-            <h5 class="text-primary mb-3">Verification Tier</h5>
-            {% if user and user.verified %}
-                <div class="flex items-center gap-3 p-3 rounded" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
-                    <i class="fa-solid fa-shield-check text-success" style="font-size: 1.5rem;"></i>
-                    <div>
-                        <h6 class="text-success mb-0" style="font-size: 0.95rem;">Verified Mentor</h6>
-                        <p class="text-secondary text-sm mb-0" style="opacity: 0.8;">Full network privileges unclocked.</p>
-                    </div>
+            
+            <!-- Right Column: Provider Capabilities (if allowed) -->
+            <div>
+                {% if session.get('user_role') in ['teach', 'both'] %}
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                    <h6 class="section-heading" style="margin-bottom: 0;">Broadcasted Capabilities</h6>
+                    <a href="/skills/post" class="btn btn-ghost" style="padding: 4px 12px; font-size: 12px; color: var(--accent2);">+ Publish Skill</a>
                 </div>
-            {% else %}
-                <div class="flex items-center gap-3 p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
-                    <i class="fa-solid fa-shield text-muted" style="font-size: 1.5rem;"></i>
-                    <div style="flex-grow: 1;">
-                        <h6 class="text-primary mb-0" style="font-size: 0.95rem;">Unverified</h6>
-                        <p class="text-muted text-sm mb-0">Restricted features. Please submit proofs.</p>
-                    </div>
-                    <a href="/verify/" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">Verify Now</a>
-                </div>
-            {% endif %}
 
-            <hr>
-
-            {% if session.get('user_role') in ['teach', 'both'] %}
-            <div class="flex justify-between items-center mb-4">
-                <h5 class="text-primary mb-0">My Capabilities</h5>
-                <a href="/skills/post" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem;"><i class="fa-solid fa-plus me-1"></i> Add Skill</a>
-            </div>
-
-            {% if my_skills %}
-                <div class="grid grid-2">
-                    {% for skill in my_skills %}
-                    <div class="card-dark card-hover" style="border-style: dashed; padding: 20px;">
-                        <div class="flex justify-between mb-2">
-                            <span class="badge badge-info">{{ skill.category }}</span>
+                {% if my_skills %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+                        {% for skill in my_skills %}
+                        <div class="card" style="border-style: dashed; padding: 20px; box-shadow: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,111,255,0.1); color: var(--accent2); display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                                <span class="pill pill-category" style="font-size: 9px; padding: 2px 6px;">{{ skill.category }}</span>
+                            </div>
+                            
+                            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 6px;">{{ skill.title }}</h4>
+                            <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px; min-height: 36px;">{{ skill.description[:60] }}...</p>
+                            
+                            <form action="/skills/delete/{{ skill._id }}" method="POST" onsubmit="return confirm('Decommission this structural block?');">
+                                <button type="submit" class="btn btn-ghost" style="width: 100%; border-color: rgba(239,68,68,0.2); color: var(--danger); padding: 6px; font-size: 12px;">
+                                    Drop Payload
+                                </button>
+                            </form>
                         </div>
-                        <h6 class="text-primary font-semibold mb-1">{{ skill.title }}</h6>
-                        <p class="text-secondary text-sm mb-3">{{ skill.description[:60] }}...</p>
-                        <form action="/skills/delete/{{ skill._id }}" method="POST" onsubmit="return confirm('Delete this block?');">
-                            <button type="submit" class="btn btn-danger w-full" style="padding: 6px; font-size: 0.8rem;">Drop Skill</button>
-                        </form>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.01); border: 1px dotted var(--border); border-radius: 12px;">
+                        <i class="fa-solid fa-folder-open" style="font-size: 24px; color: var(--t3); margin-bottom: 12px;"></i>
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">No Signals Emitted</h4>
+                        <p style="font-size: 12px; color: var(--t2);">You haven't mapped any capabilities to the network.</p>
+                    </div>
+                {% endif %}
+                
+                {% else %}
+                <div style="text-align: center; padding: 60px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 12px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <i class="fa-solid fa-lock" style="font-size: 32px; color: var(--t3); margin-bottom: 16px;"></i>
+                    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Provider Dashboard Locked</h4>
+                    <p style="font-size: 13px; color: var(--t2); max-width: 250px; margin: 0 auto;">Your node identity is set strictly to 'Consumer'. Connect directly with Providers to initiate exchanges.</p>
                 </div>
-            {% else %}
-                <div class="text-center p-4 rounded" style="background: rgba(255,255,255,0.02); border: 1px dotted var(--border);">
-                    <p class="text-muted text-sm mb-0">No capabilities mapped to your identity.</p>
-                </div>
-            {% endif %}
-            {% endif %}
+                {% endif %}
+            </div>
+            
         </div>
     </div>
 </div>

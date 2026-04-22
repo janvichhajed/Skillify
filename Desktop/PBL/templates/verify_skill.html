@@ -2,57 +2,120 @@
 {% block title %}Verify Mentorship - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-center animate-fade-up stagger-1">
-    <div style="width: 100%; max-width: 700px;">
-        <div class="text-center mb-4">
-            <h2 class="text-primary text-2xl font-semibold">Verify Mentorship</h2>
-            <p class="text-secondary">Submit proofs to establish your credibility score.</p>
-        </div>
+<style>
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 400px;
+        margin: 0 auto 40px;
+        position: relative;
+    }
+    .step-indicator::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 0; right: 0;
+        height: 2px;
+        background: var(--bg4);
+        z-index: 0;
+        transform: translateY(-50%);
+    }
+    .step-dot {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: var(--bg4);
+        color: var(--t2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px; font-weight: 600;
+        position: relative; z-index: 1;
+        border: 4px solid var(--bg);
+        transition: all 0.3s;
+    }
+    .step-dot.active {
+        background: var(--accent);
+        color: #fff;
+    }
+    .upload-zone {
+        border: 2px dashed var(--border2);
+        border-radius: 12px;
+        background: var(--bg2);
+        padding: 40px 20px;
+        text-align: center;
+        transition: background 0.2s, border-color 0.2s;
+        display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .upload-zone:hover {
+        background: rgba(124,111,255,0.05);
+        border-color: var(--accent);
+    }
+    .upload-zone input {
+        width: 100%; border: none; background: transparent; box-shadow: none; padding: 0; text-align: center;
+    }
+</style>
 
-        <div class="card-dark">
-            <!-- Simplified Progress Tabs -->
-            <div class="flex gap-2 mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-                <div class="text-accent text-sm" style="font-weight: 500;"><i class="fa-solid fa-circle"></i> Identity</div>
-                <div class="text-muted" style="margin: 0 8px;">—</div>
-                <div class="text-muted text-sm"><i class="fa-regular fa-circle"></i> Verification</div>
+<div class="fade-in mb-5" style="text-align: center; max-width: 500px; margin-left: auto; margin-right: auto;">
+    <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px; margin-bottom: 12px;">Node Verification</h1>
+    <p style="font-size: 13px; color: var(--t2);">Submit proofs to upgrade your account to Verified Provider status. Trust is cryptographically backed.</p>
+</div>
+
+<!-- Step Indicator -->
+<div class="step-indicator fade-in">
+    <div class="step-dot active">1</div>
+    <div class="step-dot active" style="background: var(--accent-glow); color: var(--accent2);">2</div>
+    <div class="step-dot">3</div>
+</div>
+
+<div class="card fade-in" style="max-width: 600px; margin: 0 auto; padding: 40px;">
+    <form action="/verify/" method="POST">
+        
+        <div class="form-group mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(124,111,255,0.1); color: var(--accent2); display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fa-solid fa-list"></i></div>
+                <h3 style="font-size: 15px; font-weight: 600;">Skill Sector</h3>
             </div>
-
-            <form action="/verify/" method="POST">
-                <div class="form-group">
-                    <label class="form-label text-primary">Skill Category <span class="text-danger">*</span></label>
-                    <select name="category" required>
-                        <option value="" disabled selected>-- Select category --</option>
-                        <option value="Web Development">Web Development</option>
-                        <option value="Data Science">Data Science</option>
-                        <option value="Design">Design</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-
-                <hr>
-
-                <div class="form-group mb-4">
-                    <label class="form-label text-primary"><i class="fa-brands fa-github me-2"></i> 1. GitHub Verification</label>
-                    <p class="text-muted text-sm mb-2">We analyze repository activity to map credibility.</p>
-                    <input type="url" name="github_url" placeholder="https://github.com/username">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label text-primary"><i class="fa-solid fa-link me-2"></i> 2. Manual Proof URLs</label>
-                    
-                    <div class="mb-2">
-                        <input type="url" name="portfolio_url" placeholder="Portfolio URL (e.g. bento.me/you)">
-                    </div>
-                    
-                    <div class="mb-2">
-                        <input type="url" name="cert_url" placeholder="Certificate Link (e.g. Credly)">
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-full mt-4" style="padding: 14px;">Submit Proofs</button>
-            </form>
+            <label class="field-label">Primary Designation</label>
+            <select name="category" class="form-control" required style="appearance: none; background: var(--bg4);">
+                <option value="" disabled selected>-- Select Sector --</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
-    </div>
+
+        <div class="form-group mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--t1); display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fa-brands fa-github"></i></div>
+                <h3 style="font-size: 15px; font-weight: 600;">Automated Source Scanner</h3>
+            </div>
+            <label class="field-label">GitHub URL</label>
+            <input type="url" name="github_url" class="form-control" placeholder="https://github.com/identity">
+        </div>
+        
+        <div class="form-group mb-4">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 24px; height: 24px; border-radius: 6px; background: rgba(16,185,129,0.1); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fa-solid fa-link"></i></div>
+                <h3 style="font-size: 15px; font-weight: 600;">Manual Proof Packets</h3>
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label class="field-label">Portfolio Node</label>
+                <input type="url" name="portfolio_url" class="form-control" placeholder="https://registry.link">
+            </div>
+            
+            <label class="field-label">Credential Hyperlink</label>
+            <div class="upload-zone">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--accent2);"></i>
+                <div>
+                    <div style="font-weight: 500; font-size: 14px;">Drop link or paste URI</div>
+                    <div style="font-size: 12px; color: var(--t2);">Supports Credly, Coursera, URI formats</div>
+                </div>
+                <input type="url" name="cert_url" class="form-control" style="background: rgba(255,255,255,0.02); text-align: left;" placeholder="https://...">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;">Transmit Proofs</button>
+    </form>
 </div>
 {% endblock %}

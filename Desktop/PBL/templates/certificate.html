@@ -2,62 +2,88 @@
 {% block title %}Cryptographic Certificates - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-4 animate-fade-up stagger-1 flex-wrap gap-4">
+<style>
+    /* Certificate Ornate Border Generation using layered shadows */
+    .cert-frame {
+        background: var(--bg3);
+        position: relative;
+        padding: 40px;
+        border-radius: 4px;
+        box-shadow: 
+            inset 0 0 0 1px rgba(255,255,255,0.05),
+            inset 0 0 0 4px var(--bg),
+            inset 0 0 0 5px rgba(167,139,250,0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s ease;
+    }
+    
+    /* Gold/purple special override */
+    .cert-frame h3 { font-family: 'Times New Roman', Times, serif; color: #facc15; font-size: 22px; font-weight: normal; font-style: italic; text-align: center; margin-bottom: 24px; }
+    
+    .cert-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(16,185,129,0.1);
+        border: 1px solid rgba(16,185,129,0.3);
+        color: #34d399;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+</style>
+
+<div class="fade-in mb-4" style="display: flex; justify-content: space-between; align-items: flex-end;">
     <div>
-        <h2 class="text-primary text-2xl font-semibold d-flex items-center gap-2"><i class="fa-solid fa-cube text-accent"></i> Certificate Vault</h2>
-        <p class="text-secondary text-sm">Verifiable completion records.</p>
+        <h6 class="section-heading">Credential Vault</h6>
+        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px;">Verified Certificates</h1>
     </div>
-    <a href="/certificates/verify" class="btn btn-outline">
-        <i class="fa-solid fa-shield-check"></i> Verify ID
+    <a href="/certificates/verify" class="btn btn-ghost" style="padding: 6px 14px; font-size: 13px;">
+        <i class="fa-solid fa-fingerprint" style="margin-right: 6px;"></i> Scanner
     </a>
 </div>
 
-<div class="grid grid-3 gap-4 animate-fade-up stagger-2">
+<div class="dash-skills-grid">
     {% if certificates %}
         {% for cert in certificates %}
-        <div class="card-dark p-0" style="overflow: hidden; display: flex; flex-direction: column;">
+        <div class="cert-frame fade-in">
+            <div class="cert-badge"><i class="fa-solid fa-check"></i> Network Valid</div>
             
-            <div style="background: linear-gradient(145deg, rgba(124,58,237,0.1), rgba(10,10,15,0)); padding: 24px; border-bottom: 1px solid var(--border);">
-                <div class="flex justify-between items-center mb-4">
-                    <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-check"></i>
-                    </div>
-                    <span class="badge badge-success border" style="font-size: 0.65rem;">VALID</span>
-                </div>
-                <h3 class="text-primary" style="font-size: 1.1rem; margin-bottom: 4px;">Certificate of Completion</h3>
-                <p class="text-accent text-sm font-monospace">Skill: {{ (cert.skill_id | string)[:8] if cert.skill_id else 'Unknown' }}...</p>
-            </div>
-            
-            <div style="padding: 24px; flex-grow: 1;">
-                <div class="mb-3">
-                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Issue Date</p>
-                    <p class="text-primary text-sm">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</p>
-                </div>
-                
-                <div class="mb-4">
-                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Mentor Hash</p>
-                    <p class="text-primary text-sm font-monospace">{{ (cert.mentor_id | string)[:12] if cert.mentor_id else 'Verified' }}...</p>
-                </div>
-                
-                <div style="padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px;">
-                    <p class="text-muted text-xs uppercase mb-1" style="letter-spacing: 0.05em;">Credential ID</p>
-                    <code class="text-primary text-sm">{{ cert.certificate_id }}</code>
+            <div style="text-align: center; margin-bottom: 32px; padding-top: 20px;">
+                <h6 class="section-heading" style="color: var(--accent2);">Certificate of Completion</h6>
+                <h3>Skill Node Mastery</h3>
+                <p style="font-size: 12px; color: var(--t2); margin-top: 16px;">This certifies module completion on the network under hash signature:</p>
+                <div style="font-family: 'Courier New', monospace; font-size: 14px; color: var(--accent2); background: var(--bg); padding: 8px; border-radius: 4px; border: 1px solid var(--border); margin-top: 8px;">
+                    {{ cert.certificate_id }}
                 </div>
             </div>
             
-            <div style="padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-surface);">
-                <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" class="btn btn-outline w-full text-sm">
-                    <i class="fa-solid fa-download"></i> Save PDF
-                </a>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+                <div>
+                    <h6 class="section-heading" style="margin-bottom: 2px;">Timestamp</h6>
+                    <p style="font-size: 11px; color: var(--t2); font-family: monospace;">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</p>
+                </div>
+                <div>
+                    <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" class="btn btn-ghost" style="padding: 6px 12px; font-size: 11px; color: var(--accent2); border-color: rgba(167,139,250,0.3);">
+                        <i class="fa-solid fa-download"></i> Save Block
+                    </a>
+                </div>
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <div class="card-dark text-center flex flex-col items-center justify-center" style="grid-column: span 3; padding: 60px 20px; min-height: 300px;">
-            <i class="fa-solid fa-cube text-muted mb-4" style="font-size: 3rem; opacity: 0.5;"></i>
-            <h4 class="text-primary mb-2">Empty Vault</h4>
-            <p class="text-secondary max-w-md mx-auto mb-4">Complete your first session lifecycle to mint cryptographic certificates to your account.</p>
-            <a href="/browse_skills" class="btn btn-primary text-sm">Browse Skills</a>
+        <div class="card fade-in" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; text-align: center;">
+            <i class="fa-solid fa-cube" style="font-size: 32px; color: var(--t3); margin-bottom: 16px;"></i>
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Vault Empty</h4>
+            <p style="font-size: 13px; color: var(--t2); max-width: 300px;">Complete sessions and leave peer reviews to execute certificate smart contracts.</p>
         </div>
     {% endif %}
 </div>
