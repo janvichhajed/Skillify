@@ -25,8 +25,26 @@
       <a href="#" class="nav-link">Certificates</a>
     </div>
     
-    <div>
-      <a href="/login" class="nav-link" style="margin-right: 24px;">Log in</a>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <!-- Notifications Component -->
+      <div class="notification-container" id="notifContainer" style="display: none;">
+        <button class="nav-link icon-btn" id="bellIcon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+          <span class="notif-badge" id="notifBadge" style="display: none;"></span>
+        </button>
+        
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <button id="clearNotifs" class="btn-clear">Clear all</button>
+          </div>
+          <div class="notif-list" id="notifList">
+            <div class="notif-empty">Loading...</div>
+          </div>
+        </div>
+      </div>
+      
+      <a href="/login" class="nav-link">Log in</a>
       <a href="/signup" class="btn-primary" style="text-decoration: none;">Get started</a>
     </div>
   </nav>
