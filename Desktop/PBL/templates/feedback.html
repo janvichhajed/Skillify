@@ -1,41 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}Leave Feedback - Skillify{% endblock %}
+{% block title %}Session Feedback - Skillify{% endblock %}
 
 {% block content %}
-<div class="flex justify-center animate-fade-up">
-    <div style="width: 100%; max-width: 500px;">
-        <div class="text-center mb-4">
-            <h2 class="text-primary text-2xl font-semibold">Session Feedback</h2>
-            <p class="text-secondary text-sm">Your review shapes mentor credibility scores.</p>
+<style>
+    /* Compound Radio Star System */
+    .rating-container { display: flex; gap: 4px; flex-direction: row-reverse; justify-content: flex-end; margin-bottom: 24px; }
+    .rating-container input[type="radio"] { display: none; }
+    .rating-container label {
+        color: var(--border2);
+        font-size: 28px;
+        cursor: pointer;
+        transition: color 0.2s, transform 0.2s;
+    }
+    
+    /* Hover effect rules - fills stars left to right */
+    .rating-container label:hover,
+    .rating-container label:hover ~ label,
+    .rating-container input[type="radio"]:checked ~ label {
+        color: #f59e0b; /* Amber */
+    }
+
+    .rating-container label:hover {
+        transform: scale(1.1);
+    }
+    
+    .feedback-box {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 500px;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+</style>
+
+<div class="fade-in mb-4" style="text-align: center; max-width: 500px; margin: 0 auto 32px;">
+    <h1 class="hero-heading" style="font-size: 40px; margin-bottom: 8px;">Session <em>Feedback</em></h1>
+    <p style="font-size: 14px; color: var(--t2);">Your qualitative analysis finalizes the smart contract.</p>
+</div>
+
+<div class="feedback-box fade-in">
+    <form action="/sessions/{{ session_id }}/feedback" method="POST">
+        
+        <h6 class="section-heading">Integrity Score</h6>
+        <div class="rating-container">
+            <input type="radio" id="star5" name="rating" value="5" required />
+            <label for="star5"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2"><i class="fa-solid fa-star"></i></label>
+            
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1"><i class="fa-solid fa-star"></i></label>
         </div>
 
-        <div class="glass-card" style="padding: 32px;">
-            <form action="/sessions/{{ session_id }}/feedback" method="POST">
-                
-                <div class="form-group text-center mb-4">
-                    <label class="form-label text-primary mb-2">Overall Rating</label>
-                    <div class="star-rating">
-                        <input type="radio" id="star5" name="rating" value="5" required />
-                        <label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
-                        <input type="radio" id="star4" name="rating" value="4" />
-                        <label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
-                        <input type="radio" id="star3" name="rating" value="3" />
-                        <label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
-                        <input type="radio" id="star2" name="rating" value="2" />
-                        <label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
-                        <input type="radio" id="star1" name="rating" value="1" />
-                        <label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label text-primary">Written Review</label>
-                    <textarea name="review_text" rows="4" placeholder="Share your experience..."></textarea>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-full mt-2">Submit Review</button>
-            </form>
+        <div class="form-group mb-4">
+            <h6 class="section-heading">Qualitative Report</h6>
+            <textarea name="comments" class="form-control" rows="4" placeholder="Detail the outcome of your session interaction..." required style="resize: vertical;"></textarea>
         </div>
-    </div>
+        
+        <div style="background: var(--bg3); padding: 12px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; margin-bottom: 24px;">
+            <i class="fa-solid fa-cube" style="color: var(--t3); margin-top: 2px;"></i>
+            <p style="font-size: 11px; color: var(--t2); margin: 0;">Submitting this record will finalize the session variables and permit certificate minting.</p>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Commit to Registry</button>
+    </form>
 </div>
 {% endblock %}
