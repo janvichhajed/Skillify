@@ -14,7 +14,17 @@ def list_certificates():
         
     user_certs = list(certificates.find({"learner_id": str(session["user_id"])}))
     
-    # We also pass the user's name to display
+    # Resolve names and titles
+    for cert in user_certs:
+        try:
+            learner = users.find_one({"_id": ObjectId(cert["learner_id"])})
+            skill = skills.find_one({"_id": ObjectId(cert.get("skill_id"))})
+            cert["learner_name"] = learner.get("name", "Unknown Learner") if learner else "Unknown"
+            cert["skill_title"] = skill.get("title", "Network Module") if skill else "Skill Node"
+        except:
+            cert["learner_name"] = "Unknown"
+            cert["skill_title"] = "Skill Node"
+            
     return render_template("certificate.html", certificates=user_certs)
 
 @certificate_bp.route("/generate/<session_id>", methods=["POST"])

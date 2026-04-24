@@ -8,6 +8,15 @@ skill_bp = Blueprint("skill", __name__, url_prefix="/skills")
 @skill_bp.route("/", methods=["GET"])
 def browse_skills():
     all_skills = list(skills.find())
+    for s in all_skills:
+        try:
+            p = users.find_one({"_id": ObjectId(s["user_id"])})
+            s["provider_name"] = p.get("name", f"User {str(p['_id'])[:4]}") if p else "Unknown User"
+            s["is_verified"] = p.get("verified", False) if p else False
+        except:
+            s["provider_name"] = "Unknown User"
+            s["is_verified"] = False
+            
     return render_template("browse_skills.html", skills=all_skills, current_user=session)
 
 @skill_bp.route("/post", methods=["GET", "POST"])
