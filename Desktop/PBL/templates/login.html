@@ -1,52 +1,103 @@
 {% extends 'base.html' %}
-{% block title %}Log in - Skillify{% endblock %}
+{% block title %}Sign In - Skillify{% endblock %}
 
 {% block content %}
 <style>
-    /* Reset main padding to allow edge-to-edge split */
     .main-content { padding: 0 !important; max-width: none !important; }
+    
+    .auth-split {
+        display: flex;
+        min-height: calc(100vh - 56px); /* subtract navbar */
+    }
+    .auth-bg {
+        flex: 1.2;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+        border-right: 1px solid var(--border);
+    }
+    .grid-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        z-index: 1;
+        mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+        -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+    }
+    
+    .auth-form-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg2);
+        padding: 40px;
+    }
+    .auth-form-panel {
+        width: 100%;
+        max-width: 420px;
+    }
+    @media (max-width: 768px) {
+        .auth-split { flex-direction: column; }
+        .auth-bg { display: none; }
+        .auth-form-wrap { padding: 24px; min-height: 80vh; }
+    }
 </style>
 
 <div class="auth-split">
-    <!-- Left Visual Panel -->
-    <div class="auth-bg">
-        <!-- Abstract gradient mesh matching the orb design for depth -->
-        <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; background: radial-gradient(circle at 30% 70%, rgba(124,111,255,0.1), transparent 50%), radial-gradient(circle at 70% 30%, rgba(167,139,250,0.08), transparent 40%);"></div>
-        <p class="fade-in">Exchange skills.<br>Grow together.</p>
+    <!-- Left Art Panel (Light Theme Version) -->
+    <div class="auth-bg fade-in">
+        <div class="grid-overlay"></div>
+        <div style="position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(146,64,14,0.05) 0%, transparent 70%); top: -100px; left: -100px; filter: blur(60px); z-index: 0;"></div>
+        
+        <div style="position: relative; z-index: 2; max-width: 480px; margin: 0 auto;">
+            <p style="font-size: 40px; font-weight: 700; color: var(--t1); letter-spacing: -1.5px; line-height: 1.1;">Exchange skills.<br><em style="font-weight:300; color: var(--t2); font-style: italic;">Grow together.</em></p>
+        </div>
     </div>
     
     <!-- Right Data Panel -->
     <div class="auth-form-wrap">
         <div class="auth-form-panel fade-in">
-            <div style="text-align: center; margin-bottom: 32px;">
-                <div class="logo" style="margin-bottom: 12px;">
-                    <span class="base">skill</span><span class="accent">ify</span>
-                </div>
-                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 6px;">Sign in</h2>
-                <p style="font-size: 13px; color: var(--t2);">Enter your details to access the network.</p>
+            <div style="margin-bottom: 32px;">
+                <div class="logo" style="margin-bottom: 16px;">skillify</div>
+                <h2 style="font-size: 24px; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px;">Welcome back</h2>
+                <p style="font-size: 14px; color: var(--t2);">Enter your details to access your account.</p>
             </div>
 
             {% if error %}
-            <div class="pill pill-error"><i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> {{ error }}</div>
+            <div style="margin-bottom: 20px;">
+                <span class="pill pill-red"><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</span>
+            </div>
             {% endif %}
             
             <form action="/auth/login" method="POST">
-                <div class="form-group">
-                    <label class="field-label" for="emailInput">Email Address</label>
-                    <input type="email" name="email" id="emailInput" class="form-control" placeholder="name@example.com" required>
+                
+                <div class="form-group mb-3">
+                    <label class="field-label" for="emailInput">Email address</label>
+                    <input type="email" name="email" id="emailInput" class="form-control" autocomplete="email" required>
                 </div>
                 
-                <div class="form-group" style="margin-bottom: 32px;">
-                    <label class="field-label" for="passwordInput">Password</label>
-                    <input type="password" name="password" id="passwordInput" class="form-control" placeholder="••••••••" required>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <label class="field-label" for="passwordInput">Password</label>
+                        <a href="#" style="font-size: 12px; color: var(--t2);">Forgot password?</a>
+                    </div>
+                    <input type="password" name="password" id="passwordInput" class="form-control" autocomplete="current-password" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px;">Sign in</button>
             </form>
             
-            <div style="margin-top: 32px; text-align: center; color: var(--t2); font-size: 13px;">
+            <div style="margin-top: 24px; text-align: center; color: var(--t2); font-size: 13px;">
                 <span>Don't have an account?</span> 
-                <a href="{{ url_for('auth.signup_page') }}" style="color: var(--t1); font-weight: 500; margin-left: 4px;">Sign up instead</a>
+                <a href="{{ url_for('auth.signup_page') }}" style="color: var(--t1); font-weight: 600; margin-left: 4px;">Get started &rarr;</a>
             </div>
         </div>
     </div>

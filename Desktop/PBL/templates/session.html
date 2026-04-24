@@ -4,137 +4,120 @@
 {% block content %}
 <style>
     .timeline {
-        border-left: 1px solid var(--border2);
-        margin-left: 12px;
-        padding-left: 24px;
+        border-left: 1px solid var(--border);
+        margin-left: 8px;
+        padding-left: 20px;
         position: relative;
     }
     .timeline-dot {
         position: absolute;
-        left: -5px;
-        width: 10px;
-        height: 10px;
+        left: -4px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
-        background: var(--bg);
-        border: 2px solid var(--accent);
+        background: var(--t1);
     }
-    .timeline-item {
-        margin-bottom: 32px;
-        position: relative;
-    }
+    .timeline-item { margin-bottom: 32px; position: relative; }
     
-    .timeline-item.active .timeline-dot {
-        background: var(--accent);
-        box-shadow: 0 0 10px var(--accent-glow);
-    }
-    .timeline-item.success .timeline-dot {
-        border-color: var(--success);
-        background: var(--success);
-    }
-    .timeline-item.warning .timeline-dot {
-        border-color: var(--warning);
-        background: var(--warning);
-    }
+    .timeline-item.success .timeline-dot { background: var(--green); }
     
-    .tab-pill {
-        padding: 6px 16px;
+    .pill-tabs {
+        display: flex; gap: 8px; margin-bottom: 32px;
+    }
+    .tab-item {
+        padding: 5px 14px;
         border-radius: 20px;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
-        background: var(--bg3);
         color: var(--t2);
+        cursor: pointer;
         border: 1px solid var(--border);
-        cursor: default;
     }
-    .tab-pill.active {
-        background: var(--glow);
-        color: var(--accent2);
-        border-color: var(--border2);
-    }
+    .tab-item.active { background: var(--bg2); color: var(--t1); border-color: var(--border2); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 </style>
 
-<div class="fade-in mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-        <div>
-            <h6 class="section-heading">Transmission #{{ (session_data._id | string)[:10] }}...</h6>
-            <h1 style="font-size: 24px; font-weight: 600; color: var(--t1);">Session Pipeline</h1>
-        </div>
-        
-        <span class="pill 
-            {% if session_data.status == 'pending' %}pill-pending
-            {% elif session_data.status == 'accepted' %}pill-category
-            {% else %}pill-completed{% endif %}">
-            {{ session_data.status | title }} Node
-        </span>
+<div class="fade-in mb-4 pb-4" style="border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h6 class="section-heading">Transaction Block #{{ (session_data._id | string)[:8] }}</h6>
+        <h1 style="font-size: 32px; font-weight: 700; color: var(--t1); letter-spacing: -1px;">Session Logistics</h1>
     </div>
+    
+    <span class="pill 
+        {% if session_data.status == 'pending' %}pill-amber
+        {% elif session_data.status == 'accepted' %}pill-blue
+        {% else %}pill-green{% endif %}">
+        {{ session_data.status | title }} Node
+    </span>
 </div>
 
-<div class="card fade-in" style="max-width: 600px;">
+<div class="fade-in" style="max-width: 500px;">
     
-    <div style="display: flex; gap: 12px; margin-bottom: 32px;">
-        <div class="tab-pill">Status Tracker</div>
-        <div class="tab-pill active">Timeline</div>
+    <div class="pill-tabs">
+        <div class="tab-item">All Details</div>
+        <div class="tab-item active">Timeline</div>
     </div>
 
+    <!-- Timeline Render -->
     <div class="timeline">
-        <!-- Initialized -->
+        
+        <!-- Intialization -->
         <div class="timeline-item success">
             <div class="timeline-dot" style="top: 6px;"></div>
-            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Request Initialized</h4>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Request Issued</h4>
             <p style="font-size: 12px; color: var(--t2);">Block created on {{ session_data.created_at }}</p>
         </div>
 
-        <!-- Acceptance Phase -->
-        <div class="timeline-item {% if session_data.status == 'pending' %}warning{% elif session_data.status in ['accepted', 'completed'] %}success{% endif %}">
+        <!-- Connection -->
+        <div class="timeline-item {% if session_data.status in ['accepted', 'completed'] %}success{% endif %}">
             <div class="timeline-dot" style="top: 6px;"></div>
-            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Provider Acceptance</h4>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Provider Acknowledgement</h4>
             
             {% if session_data.status == 'pending' %}
-                <p style="font-size: 12px; color: var(--warning); margin-bottom: 12px;">Waiting for external node acknowledgment.</p>
+                <p style="font-size: 12px; color: var(--amber); margin-bottom: 12px;">Waiting for endpoint validation.</p>
                 {% if current_user.user_id == session_data.provider_id %}
                     <form action="/sessions/{{ session_data._id }}/accept" method="POST">
-                        <button type="submit" class="btn btn-ghost" style="color: var(--success); border-color: rgba(16,185,129,0.3); padding: 6px 12px; font-size: 12px;">Acknowledge & Sync</button>
+                        <button type="submit" class="btn btn-outline" style="border-radius: 6px; padding: 6px 12px; font-size: 12px;">Accept Sync</button>
                     </form>
                 {% endif %}
             {% else %}
-                <p style="font-size: 12px; color: var(--t2);">Node connection successfully established.</p>
+                <p style="font-size: 12px; color: var(--t2);">Handshake protocol finished.</p>
             {% endif %}
         </div>
         
-        <!-- Execution Phase -->
+        <!-- Live Execution -->
         {% if session_data.status in ['accepted', 'completed'] %}
-        <div class="timeline-item {% if session_data.status == 'accepted' %}active{% else %}success{% endif %}">
+        <div class="timeline-item {% if session_data.status == 'completed' %}success{% endif %}">
             <div class="timeline-dot" style="top: 6px;"></div>
-            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Data Transmission</h4>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Active Transfer</h4>
             
             {% if session_data.status == 'accepted' %}
-                <p style="font-size: 12px; color: var(--accent2); margin-bottom: 12px;">Session live. Communicate with peer and conclude when finished.</p>
+                <p style="font-size: 12px; color: var(--t2); margin-bottom: 12px;">Conduct the payload transfer. Both parties must finalize.</p>
                 <form action="/sessions/{{ session_data._id }}/complete" method="POST">
-                    <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Finalize Process</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; border-radius: 6px;">Mark Complete</button>
                 </form>
             {% else %}
-                <p style="font-size: 12px; color: var(--t2);">Process terminated successfully on {{ session_data.completed_at }}.</p>
+                <p style="font-size: 12px; color: var(--t2);">Session closed cleanly on {{ session_data.completed_at }}.</p>
             {% endif %}
         </div>
         {% endif %}
 
-        <!-- Wrap Up Phase -->
+        <!-- Yield Phase -->
         {% if session_data.status == 'completed' %}
-        <div class="timeline-item active">
+        <div class="timeline-item">
             <div class="timeline-dot" style="top: 6px;"></div>
-            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Certificate Generation</h4>
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Cryptographic Proofing</h4>
             
-            <div style="margin-top: 12px;">
+            <div style="margin-top: 8px;">
                 {% if current_user.user_id == session_data.requester_id and not session_data.feedback_given %}
-                    <p style="font-size: 12px; color: var(--warning); margin-bottom: 12px;">Node feedback required to execute smart contract.</p>
-                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-ghost" style="color: var(--warning); border-color: rgba(245, 158, 11, 0.3); padding: 6px 12px; font-size: 12px;">Write Feedback Payload</a>
+                    <p style="font-size: 12px; color: var(--amber); margin-bottom: 12px;">Requires peer feedback string to mint certificate.</p>
+                    <a href="/sessions/{{ session_data._id }}/feedback" class="btn btn-outline" style="border-radius: 6px; padding: 6px 12px; font-size: 12px;">Provide Validation Data</a>
                 {% elif session_data.feedback_given and not session_data.certificate_issued %}
-                    <p style="font-size: 12px; color: var(--accent2); margin-bottom: 12px;">Conditions met. Ready for minting.</p>
+                    <p style="font-size: 12px; color: var(--t2); margin-bottom: 12px;">Requirements met. Ready for blockchain simulation mint.</p>
                     <form action="/certificates/generate/{{ session_data._id }}" method="POST">
-                        <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-cube" style="margin-right: 6px;"></i> Mint Certificate</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; border-radius: 6px;">Issue Certificate</button>
                     </form>
                 {% elif session_data.certificate_issued %}
-                    <div class="pill pill-completed"><i class="fa-solid fa-lock"></i> Certificate Secured in Vault</div>
+                    <span class="pill pill-green">Secured in Ledger Vault</span>
                 {% endif %}
             </div>
         </div>

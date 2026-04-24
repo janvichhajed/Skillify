@@ -1,89 +1,100 @@
 {% extends 'base.html' %}
-{% block title %}Cryptographic Certificates - Skillify{% endblock %}
+{% block title %}Network Certificates - Skillify{% endblock %}
 
 {% block content %}
 <style>
-    /* Certificate Ornate Border Generation using layered shadows */
+    /* Compound Styled Ornate Border Tricks */
     .cert-frame {
-        background: var(--bg3);
+        background: var(--bg2);
         position: relative;
-        padding: 40px;
-        border-radius: 4px;
-        box-shadow: 
-            inset 0 0 0 1px rgba(255,255,255,0.05),
-            inset 0 0 0 4px var(--bg),
-            inset 0 0 0 5px rgba(167,139,250,0.3);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        transition: transform 0.3s ease;
+        padding: 48px;
+        border: 1px solid var(--border);
+        border-radius: 8px; /* Not highly rounded to look formal */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
     
-    /* Gold/purple special override */
-    .cert-frame h3 { font-family: 'Times New Roman', Times, serif; color: #facc15; font-size: 22px; font-weight: normal; font-style: italic; text-align: center; margin-bottom: 24px; }
+    /* Four corner brackets using pseudos */
+    .cert-frame::before, .cert-frame::after {
+        content: ''; position: absolute; pointer-events: none;
+    }
+    .cert-frame::before {
+        top: 8px; left: 8px; right: 8px; bottom: 8px;
+        border: 1px solid var(--border2);
+    }
+    .cert-frame::after {
+        top: 14px; left: 14px; right: 14px; bottom: 14px;
+        border: 1px solid transparent;
+        /* create corner intersections via background gradients (clever css) */
+        background: 
+            linear-gradient(to right, var(--border2) 2px, transparent 2px) 0 0,
+            linear-gradient(to right, var(--border2) 2px, transparent 2px) 0 100%,
+            linear-gradient(to left, var(--border2) 2px, transparent 2px) 100% 0,
+            linear-gradient(to left, var(--border2) 2px, transparent 2px) 100% 100%,
+            linear-gradient(to bottom, var(--border2) 2px, transparent 2px) 0 0,
+            linear-gradient(to bottom, var(--border2) 2px, transparent 2px) 100% 0,
+            linear-gradient(to top, var(--border2) 2px, transparent 2px) 0 100%,
+            linear-gradient(to top, var(--border2) 2px, transparent 2px) 100% 100%;
+        background-repeat: no-repeat;
+        background-size: 16px 16px;
+    }
     
-    .cert-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(16,185,129,0.1);
-        border: 1px solid rgba(16,185,129,0.3);
-        color: #34d399;
+    .cert-meta-strip {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 10px;
         display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+        justify-content: center;
+        gap: 32px;
+        padding: 12px;
+        margin-top: 32px;
     }
 </style>
 
 <div class="fade-in mb-4" style="display: flex; justify-content: space-between; align-items: flex-end;">
     <div>
-        <h6 class="section-heading">Credential Vault</h6>
-        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px;">Verified Certificates</h1>
+        <h1 class="hero-heading" style="font-size: 40px; margin-bottom: 8px;">Credential <em>Vault</em></h1>
+        <p style="font-size: 14px; color: var(--t2);">Formally issued network proofs tied to your identity.</p>
     </div>
-    <a href="/certificates/verify" class="btn btn-ghost" style="padding: 6px 14px; font-size: 13px;">
-        <i class="fa-solid fa-fingerprint" style="margin-right: 6px;"></i> Scanner
+    <a href="/certificates/verify" class="btn btn-outline" style="border-radius: 6px; padding: 6px 14px; font-size: 13px;">
+        Scanner Node
     </a>
 </div>
 
 <div class="dash-skills-grid">
     {% if certificates %}
         {% for cert in certificates %}
-        <div class="cert-frame fade-in">
-            <div class="cert-badge"><i class="fa-solid fa-check"></i> Network Valid</div>
+        <div class="cert-frame fade-in" style="grid-column: 1 / -1; max-width: 600px; margin: 0 auto; width: 100%;">
             
-            <div style="text-align: center; margin-bottom: 32px; padding-top: 20px;">
-                <h6 class="section-heading" style="color: var(--accent2);">Certificate of Completion</h6>
-                <h3>Skill Node Mastery</h3>
-                <p style="font-size: 12px; color: var(--t2); margin-top: 16px;">This certifies module completion on the network under hash signature:</p>
-                <div style="font-family: 'Courier New', monospace; font-size: 14px; color: var(--accent2); background: var(--bg); padding: 8px; border-radius: 4px; border: 1px solid var(--border); margin-top: 8px;">
+            <div style="position: absolute; top: 24px; right: 24px; z-index: 10;">
+                <span class="pill pill-green"><i class="fa-solid fa-check"></i> Verified Signature</span>
+            </div>
+            
+            <div style="text-align: center; position: relative; z-index: 5;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--t3); margin-bottom: 8px;">Certificate of Completion</div>
+                <h3 style="font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--t1); margin-bottom: 16px;">Skill Node Mastery</h3>
+                
+                <p style="font-size: 13px; color: var(--t2); max-width: 300px; margin: 0 auto;">This certifies the fulfillment of pedagogical duties on the peer network under hash payload:</p>
+                
+                <div style="font-family: 'Courier New', monospace; color: var(--t2); font-size: 15px; margin-top: 16px;">
                     {{ cert.certificate_id }}
                 </div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
-                <div>
-                    <h6 class="section-heading" style="margin-bottom: 2px;">Timestamp</h6>
-                    <p style="font-size: 11px; color: var(--t2); font-family: monospace;">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</p>
+            <div class="cert-meta-strip relative" style="z-index: 5;">
+                <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">Date Issued</div>
+                    <div style="font-size: 13px; font-weight: 500; font-family: monospace;">{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date and cert.issue_date.strftime else cert.issue_date }}</div>
                 </div>
-                <div>
-                    <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" class="btn btn-ghost" style="padding: 6px 12px; font-size: 11px; color: var(--accent2); border-color: rgba(167,139,250,0.3);">
-                        <i class="fa-solid fa-download"></i> Save Block
-                    </a>
+                <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">Action</div>
+                    <a href="/certificates/download/{{ cert.certificate_id }}" target="_blank" style="font-size: 13px; font-weight: 600; color: var(--t1); text-decoration: underline;">Save File</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <div class="card fade-in" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; text-align: center;">
-            <i class="fa-solid fa-cube" style="font-size: 32px; color: var(--t3); margin-bottom: 16px;"></i>
-            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Vault Empty</h4>
-            <p style="font-size: 13px; color: var(--t2); max-width: 300px;">Complete sessions and leave peer reviews to execute certificate smart contracts.</p>
+        <div class="card fade-in" style="grid-column: 1 / -1; padding: 60px; text-align: center; border-style: dashed;">
+            <p style="font-size: 14px; color: var(--t2);">No encrypted proofs extracted for this specific node.</p>
         </div>
     {% endif %}
 </div>

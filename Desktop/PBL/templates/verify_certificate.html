@@ -1,71 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}Verify Validation - Skillify{% endblock %}
+{% block title %}Log Verification - Skillify{% endblock %}
 
 {% block content %}
 <style>
-    /* Draw Check Animation */
+    /* Clean Draw Check Animation */
     .draw-check {
         stroke-dasharray: 100;
         stroke-dashoffset: 100;
         animation: draw-check 0.8s ease-out forwards;
-        animation-delay: 0.2s;
+        animation-delay: 0.1s;
     }
     @keyframes draw-check { to { stroke-dashoffset: 0; } }
     
     /* Shake Animation */
-    .shake {
-        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-    }
+    .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
     @keyframes shake {
         0%,100%{transform:translateX(0)}
-        20%{transform:translateX(-8px)}
-        40%{transform:translateX(8px)}
-        60%{transform:translateX(-5px)}
-        80%{transform:translateX(5px)}
+        20%{transform:translateX(-6px)}
+        40%{transform:translateX(6px)}
+        60%{transform:translateX(-3px)}
+        80%{transform:translateX(3px)}
     }
     
-    .verify-input {
-        background: var(--bg); font-family: monospace; font-size: 24px; padding: 24px; text-align: center; letter-spacing: 4px; border: 1px solid rgba(124,111,255,0.4); border-radius: 12px; color: var(--t1); width: 100%; outline: none; margin-bottom: 24px; transition: box-shadow 0.3s;
+    .verify-input-super {
+        background: var(--bg2); font-family: monospace; font-size: 20px; padding: 20px; text-align: center; letter-spacing: 2px; border: 1px solid var(--border2); border-radius: 8px; color: var(--t1); width: 100%; outline: none; margin-bottom: 16px; transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .verify-input:focus { box-shadow: 0 0 0 4px var(--glow); }
+    .verify-input-super:focus { border-color: var(--t1); box-shadow: 0 0 0 3px rgba(26,26,24,0.06); }
+    
+    .scan-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 40px;
+        width: 100%;
+        max-width: 480px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
 </style>
 
-<div class="fade-in" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
-    <div style="width: 100%; max-width: 500px; text-align: center;">
+<div class="fade-in" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 200px);">
+    <div class="scan-card">
         
-        <i class="fa-solid fa-fingerprint" style="font-size: 40px; color: var(--accent2); margin-bottom: 24px;"></i>
-        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px; margin-bottom: 8px;">Network Scanner</h1>
-        <p style="font-size: 13px; color: var(--t2); margin-bottom: 32px;">Input credential hash block to authenticate against the node registry.</p>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--t1); letter-spacing: -1px; margin-bottom: 8px;">Registry Scanner</h1>
+        <p style="font-size: 13px; color: var(--t2); margin-bottom: 32px;">Input credential hash block to authenticate against the immutable ledger.</p>
 
-        <form action="/certificates/verify" method="POST" class="mb-5">
-            <input type="text" name="certificate_id" class="verify-input" placeholder="XXXX-XXXX-XXXX" required>
-            <button class="btn btn-primary" type="submit" style="width: 100%; padding: 16px; font-size: 15px;">Authenticate Signature</button>
+        <form action="/certificates/verify" method="POST" class="mb-4">
+            <input type="text" name="certificate_id" class="verify-input-super" placeholder="XXXX-XXXX-XXXX" required>
+            <button class="btn btn-primary" type="submit" style="width: 100%; padding: 14px; font-size: 14px; border-radius: 8px;">Run Validation Protocol</button>
         </form>
 
         {% if result %}
-        <div style="margin-top: 40px;">
+        <div style="margin-top: 32px; border-top: 1px solid var(--border); padding-top: 32px;">
             {% if result == "Valid Certificate" %}
-                <div class="card fade-in" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); padding: 32px;">
-                    <!-- Draw SVG Check -->
-                    <svg viewBox="0 0 52 52" style="width: 48px; height: 48px; margin-bottom: 16px;">
-                        <circle cx="26" cy="26" r="25" fill="none" stroke="#34d399" stroke-width="2"/>
-                        <path class="draw-check" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                <div class="fade-in">
+                    <!-- Clean SVG Check -->
+                    <svg viewBox="0 0 52 52" style="width: 40px; height: 40px; margin-bottom: 12px;">
+                        <circle cx="26" cy="26" r="25" fill="var(--green-bg)" stroke="var(--green)" stroke-width="1.5"/>
+                        <path class="draw-check" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" d="M15 27l7 7 16-16"/>
                     </svg>
                     
-                    <h3 style="font-size: 18px; color: var(--success); margin-bottom: 8px;">Hash Validated ✅</h3>
-                    <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px;">The certificate block natively exists on the ledger.</p>
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Hash Confirmed</h3>
+                    <p style="font-size: 13px; color: var(--t2); margin-bottom: 16px;">This token exists physically formatted within the node network.</p>
                     
-                    <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px;">
-                        <h6 class="section-heading" style="margin-bottom: 4px;">Metadata Array</h6>
-                        <div style="font-family: monospace; font-size: 14px; color: var(--accent2);">{{ cert_data.certificate_id }}</div>
-                        <div style="font-size: 11px; color: var(--t3); margin-top: 4px;">Timestamp: {{ cert_data.issue_date }}</div>
+                    <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: inline-block;">
+                        <div style="font-family: monospace; font-size: 13px; font-weight: 500; color: var(--t1);">{{ cert_data.certificate_id }}</div>
                     </div>
                 </div>
             {% else %}
-                <div class="card shake" style="background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.2); padding: 32px;">
-                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--danger); margin-bottom: 16px;"></i>
-                    <h3 style="font-size: 18px; color: var(--danger); margin-bottom: 8px;">Validation Failure ⚠️</h3>
-                    <p style="font-size: 12px; color: var(--t2); margin-bottom: 0;">This hash block returned absolutely zero nodes. Connection voided.</p>
+                <div class="shake">
+                    <span class="pill pill-red" style="margin-bottom: 12px;">Verification Failure</span>
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">Zero Hits Returned</h3>
+                    <p style="font-size: 13px; color: var(--t2); margin-bottom: 0;">This block signature is forged or invalid.</p>
                 </div>
             {% endif %}
         </div>

@@ -4,29 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SKILLIFY{% endblock %}</title>
-    <!-- Inter Font -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Orbs -->
-    <div class="bg-mesh">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
 
-    <!-- Flash Messages Toast System -->
     <div class="flash-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="flash-msg" style="border-left: 3px solid {% if category == 'success' %}var(--success){% elif category == 'danger' or category == 'error' %}var(--danger){% else %}var(--accent){% endif %};">
+                <div class="flash-msg fade-in">
+                    {% if category == 'success' %}<i class="fa-solid fa-circle-check" style="color: var(--green);"></i>
+                    {% elif category == 'error' or category == 'danger' %}<i class="fa-solid fa-circle-exclamation" style="color: var(--red);"></i>
+                    {% else %}<i class="fa-solid fa-circle-info" style="color: var(--blue);"></i>{% endif %}
                     {{ message }}
                 </div>
             {% endfor %}
@@ -34,66 +29,42 @@
     {% endwith %}
     </div>
 
-    <!-- Glassmorphism Navbar -->
+    <!-- Editorial Navbar -->
     <nav class="navbar">
-        <a class="logo" href="{{ url_for('home') }}" style="text-decoration: none;">
-            <span class="base">skill</span><span class="accent">ify</span>
-        </a>
+        <a href="{{ url_for('home') }}" class="logo">skillify</a>
         
         <button class="mobile-nav-toggle"><i class="fa-solid fa-bars"></i></button>
-
+        
         <div class="nav-links">
             {% if not session.get('user_id') %}
-                <a href="{{ url_for('skill.browse_skills') }}" class="nav-link">Explore Area</a>
-                <a href="/certificates/verify" class="nav-link">Verify Credentials</a>
-                <a href="{{ url_for('auth.login_page') }}" class="btn btn-ghost" style="padding: 6px 16px; font-size: 13px;">Sign In</a>
-                <a href="{{ url_for('auth.signup_page') }}" class="btn btn-primary" style="padding: 6px 16px; font-size: 13px;">Join Network</a>
+                <a href="{{ url_for('skill.browse_skills') }}">Explore</a>
+                <a href="/certificates/verify">Verify</a>
+                <a href="{{ url_for('auth.login_page') }}" class="btn btn-outline btn-pill" style="padding: 6px 16px;">Sign in</a>
+                <a href="{{ url_for('auth.signup_page') }}" class="btn btn-primary btn-pill" style="padding: 6px 16px;">Get started &rarr;</a>
             {% else %}
-                <a href="{{ url_for('profile_page') }}" class="nav-link" style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: var(--accent); border-radius: 50%; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                        {{ session.get('user_name', 'U')[0] | upper }}
-                    </div>
-                    {{ session.get('user_name', 'Participant') }}
+                <a href="{{ url_for('profile_page') }}" style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 13px; font-weight: 600;">{{ session.get('user_name', 'User') }}</span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--t3);"></i>
                 </a>
             {% endif %}
         </div>
     </nav>
 
-    <!-- Content Structure -->
-    <div class="app-wrapper">
+    <!-- App Container -->
+    <div class="app-container">
         {% if session.get('user_id') %}
-        <!-- Desktop Sidebar -->
         <aside class="sidebar fade-in">
-            <h6 class="section-heading">Application</h6>
-            <a class="sidebar-link" href="{{ url_for('dashboard') }}">
-                <i class="fa-solid fa-layer-group" style="width: 16px; text-align: center;"></i> Overview
-            </a>
-            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}">
-                <i class="fa-solid fa-magnifying-glass" style="width: 16px; text-align: center;"></i> Directory
-            </a>
-            <a class="sidebar-link" href="/certificates/verify">
-                <i class="fa-solid fa-shield-check" style="width: 16px; text-align: center;"></i> Validator
-            </a>
-
-            <h6 class="section-heading" style="margin-top: 24px;">Personal</h6>
-            <a class="sidebar-link" href="{{ url_for('profile_page') }}">
-                <i class="fa-solid fa-user" style="width: 16px; text-align: center;"></i> Identity
-            </a>
-            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="color: var(--danger);">
-                <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px; text-align: center;"></i> Disconnect
-            </a>
+            <h6 class="section-heading" style="margin-top: 12px; margin-bottom: 8px;">Network</h6>
+            <a class="sidebar-link" href="{{ url_for('dashboard') }}">Overview</a>
+            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}">Directory</a>
+            <a class="sidebar-link" href="/certificates/verify">Validator</a>
+            
+            <h6 class="section-heading" style="margin-top: 24px; margin-bottom: 8px;">Personal</h6>
+            <a class="sidebar-link" href="{{ url_for('profile_page') }}">Identity Profile</a>
+            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="margin-top: 12px; color: var(--red);">Sign out</a>
         </aside>
-
-        <!-- Mobile Nav Replacement -->
-        <nav class="bottom-nav">
-            <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-layer-group"></i><span>Home</span></a>
-            <a href="{{ url_for('skill.browse_skills') }}"><i class="fa-solid fa-magnifying-glass"></i><span>Look</span></a>
-            <a href="/certificates/verify"><i class="fa-solid fa-shield-check"></i><span>Verify</span></a>
-            <a href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user"></i><span>Me</span></a>
-        </nav>
         {% endif %}
 
-        <!-- Main Dynamic Viewport -->
         <main class="main-content">
             {% block content %}{% endblock %}
         </main>

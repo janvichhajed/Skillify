@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Page entrance stagger animation with IntersectionObserver
+    // 1. Page load fade staggered via IntersectionObserver
     const observer = new IntersectionObserver((entries) => {
         let delayCount = 0;
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 setTimeout(() => {
-                    entry.target.style.animation = `slideUpFade 0.4s ease forwards`;
+                    entry.target.classList.add('is-visible');
                 }, delayCount * 60);
                 delayCount++;
                 observer.unobserve(entry.target);
@@ -14,82 +14,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: '0px 0px -20px 0px', threshold: 0.1 });
 
-    const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach(el => {
-        observer.observe(el);
-    });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // 2. Ripple effect on buttons
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            let rect = e.target.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
-            let ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            
-            // Only append if it's the actual button, not an inner span/icon
-            if (e.target === this || this.contains(e.target)) {
-               this.appendChild(ripple);
-            }
-            setTimeout(() => {
-                if(ripple.parentNode) ripple.parentNode.removeChild(ripple);
-            }, 600);
-        });
-    });
-
-    // 3. Form submit loading state
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
+    // 2. Button loading state
+    document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function() {
             const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                // Save original width to prevent shifting
-                submitBtn.style.width = submitBtn.offsetWidth + 'px';
-                submitBtn.innerHTML = `<svg class="spinner" viewBox="0 0 50 50" style="width: 16px; height: 16px; margin-right: 8px; animation: rotate 2s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" style="stroke-dasharray: 1, 200; stroke-dashoffset: 0; animation: dash 1.5s ease-in-out infinite;"></circle></svg> Loading...`;
+            if (submitBtn && !submitBtn.classList.contains('loading')) {
+                submitBtn.classList.add('loading');
+                submitBtn.style.width = submitBtn.offsetWidth + 'px'; // maintain size
                 submitBtn.style.pointerEvents = 'none';
+                
+                // Inject SVG inline
+                const spinner = `<svg style="width:14px; height:14px; margin-right:8px; animation:rotate 1.5s linear infinite;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="45 100" stroke-linecap="round"></circle></svg>`;
+                submitBtn.innerHTML = spinner + "Loading...";
             }
         });
     });
 
-    // Add spinner keyframes dynamically if not present
-    if (!document.getElementById('spinner-styles')) {
+    if (!document.getElementById('spinner-keyframes')) {
         const style = document.createElement('style');
-        style.id = 'spinner-styles';
-        style.innerHTML = `
-            @keyframes rotate { 100% { transform: rotate(360deg); } }
-            @keyframes dash { 
-                0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
-                50% { stroke-dasharray: 89, 200; stroke-dashoffset: -35px; }
-                100% { stroke-dasharray: 89, 200; stroke-dashoffset: -124px; }
-            }
-        `;
+        style.id = 'spinner-keyframes';
+        style.innerHTML = `@keyframes rotate { 100% { transform: rotate(360deg); } }`;
         document.head.appendChild(style);
     }
 
-    // 4. Sidebar active route auto-select
+    // 3. Active nav highlight auto-detect
     const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.sidebar-link, .bottom-nav a');
-    navLinks.forEach(link => {
+    document.querySelectorAll('.sidebar-link, .nav-links a').forEach(link => {
         const href = link.getAttribute('href');
-        if (href && currentPath === href) {
-            link.classList.add('active');
-        } else if (href && href !== '/' && currentPath.startsWith(href)) {
+        if (href === currentPath || (href !== '/' && currentPath.startsWith(href))) {
             link.classList.add('active');
         }
     });
 
-    // 5. Flash messages disappearance
-    const flashList = document.querySelectorAll('.flash-msg');
-    flashList.forEach((msg, idx) => {
+    // 4. Smooth anchor scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // 5. Flash message dismissal
+    document.querySelectorAll('.flash-msg').forEach((msg, idx) => {
         setTimeout(() => {
             msg.style.opacity = '0';
-            msg.style.transform = 'translateY(-10px)';
+            msg.style.transform = 'translateY(-5px)';
             msg.style.transition = 'all 0.3s ease';
             setTimeout(() => msg.remove(), 300);
         }, 4000 + (idx * 500));
     });
+
 });

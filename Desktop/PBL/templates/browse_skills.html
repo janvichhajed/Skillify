@@ -1,133 +1,148 @@
 {% extends 'base.html' %}
-{% block title %}Explore Network - Skillify{% endblock %}
+{% block title %}Browse Network - Skillify{% endblock %}
 
 {% block content %}
 <style>
-    .search-bar-sticky {
-        position: sticky;
-        top: 65px; /* right below navbar */
-        z-index: 90;
-        background: var(--bg);
-        padding: 20px 0;
-    }
-    .search-input-wrapper {
-        background: var(--bg3);
+    .browse-search {
+        background: var(--bg2);
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         padding: 0 16px;
+        margin-bottom: 16px;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .search-input-wrapper:focus-within {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(124,111,255,0.12);
+    .browse-search:focus-within {
+        border-color: var(--border2);
+        box-shadow: 0 0 0 3px rgba(26,26,24,0.06);
     }
-    .search-input-wrapper input {
+    .browse-search input {
         border: none;
         background: transparent;
         color: var(--t1);
-        padding: 16px;
+        padding: 14px;
         width: 100%;
-        font-family: var(--font-sans);
-        font-size: 15px;
+        font-family: inherit;
+        font-size: 14px;
         outline: none;
     }
+    .browse-search input::placeholder { color: var(--t3); }
+    
+    .filter-chip {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--t2);
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .filter-chip.active {
+        background: var(--t1);
+        color: #fff;
+        border-color: var(--t1);
+    }
+    .filter-chip:hover:not(.active) {
+        background: var(--border);
+    }
 
-    /* Card slide up button logic */
-    .skill-card-action {
-        overflow: hidden;
-        margin-top: 16px;
-    }
+    /* Hover effect for requesting session */
+    .skill-card-action { margin-top: 16px; overflow: hidden; height: 38px; position: relative; }
     .req-btn {
-        width: 100%;
-        opacity: 0.8;
-        transform: translateY(8px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%; position: absolute; bottom: 0; left: 0;
+        opacity: 0; transform: translateY(8px);
+        transition: all 0.25s ease;
     }
-    .card:hover .req-btn {
-        opacity: 1;
-        transform: translateY(0);
+    /* Standard element visible by default, hidden on hover */
+    .provider-details { 
+        display: flex; justify-content: space-between; align-items: center; 
+        border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;
+        transition: opacity 0.2s;
     }
+    .card:hover .req-btn { opacity: 1; transform: translateY(0); }
+    .card:hover .provider-details { opacity: 0; pointer-events: none; }
 </style>
 
-<div class="fade-in mb-4">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1 style="font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.8px;">Skill Network</h1>
-        {% if current_user and session.get('user_role') in ['teach', 'both'] %}
-            <a href="/skills/post" class="btn btn-primary"><i class="fa-solid fa-plus" style="margin-right: 6px;"></i> Post Node</a>
-        {% endif %}
+<div class="fade-in mb-4" style="display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h1 class="hero-heading" style="font-size: 44px; margin-bottom: 8px;">Network <em>Directory</em></h1>
+        <p style="font-size: 14px; color: var(--t2);">Discover and connect with available peer nodes.</p>
+    </div>
+    {% if current_user and session.get('user_role') in ['teach', 'both'] %}
+        <a href="/skills/post" class="btn btn-outline">Post listing</a>
+    {% endif %}
+</div>
+
+<div class="fade-in mb-5" style="position: sticky; top: 56px; background: var(--bg); padding: 16px 0; z-index: 90;">
+    <div class="browse-search">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--t3);"></i>
+        <input type="text" placeholder="Search frameworks, languages, or concepts...">
+    </div>
+    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+        <div class="filter-chip active">All Frameworks</div>
+        <div class="filter-chip">Development</div>
+        <div class="filter-chip">Design</div>
+        <div class="filter-chip">Product</div>
     </div>
 </div>
 
-<!-- Sticky Search + Filters -->
-<div class="search-bar-sticky fade-in">
-    <div class="search-input-wrapper">
-        <i class="fa-solid fa-magnifying-glass" style="color: var(--t3); font-size: 18px;"></i>
-        <input type="text" placeholder="Search by language, framework, or concept... (Python, UI/UX, Rust)">
-    </div>
-    
-    <div style="display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; padding-bottom: 8px;">
-        <span class="pill pill-category" style="background: rgba(124,111,255,0.1); border-color: var(--accent); color: var(--accent2);">All Frameworks</span>
-        <span class="pill pill-outline">Development</span>
-        <span class="pill pill-outline">Design</span>
-        <span class="pill pill-outline">Product</span>
-        <span class="pill pill-outline">Data Science</span>
-    </div>
-</div>
-
-<div class="dash-skills-grid mt-4" style="margin-top: 24px;">
+<div class="dash-skills-grid">
     {% if skills %}
         {% for skill in skills %}
         <div class="card fade-in" style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(124,111,255,0.12); color: var(--accent2); display: flex; align-items: center; justify-content: center; font-size: 16px;">
-                        <i class="fa-solid fa-layer-group"></i> <!-- Sub placeholder icon -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div style="width: 38px; height: 38px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--t2);">
+                        <i class="fa-solid fa-layer-group"></i>
                     </div>
-                    <span class="pill pill-category">{{ skill.category }}</span>
+                    <span class="pill pill-neutral">{{ skill.category }}</span>
                 </div>
                 
-                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--t1);">{{ skill.title }}</h3>
-                <p style="font-size: 12px; color: var(--t2); margin-bottom: 16px; min-height: 36px;">{{ skill.description[:90] }}...</p>
+                <h3 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">{{ skill.title }}</h3>
+                <p style="font-size: 12px; color: var(--t2); margin-bottom: 4px; min-height: 36px; line-height: 1.5;">{{ skill.description[:90] }}...</p>
                 
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-user-astronaut" style="color: var(--t3); font-size: 12px;"></i>
-                        <span style="font-size: 11px; color: var(--t2); font-weight: 500;">Provider {{ (skill.user_id | string)[:4] }}</span>
+                <div class="skill-card-action">
+                    <!-- Default view -->
+                    <div class="provider-details">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 16px; height: 16px; border-radius: 50%; background: var(--border2); display: flex; align-items: center; justify-content: center; font-size: 8px; color: #fff;">
+                                {{ (skill.user_id | string)[:1] | upper }}
+                            </div>
+                            <span style="font-size: 12px; font-weight: 500; color: var(--t2);">User {{ (skill.user_id | string)[:4] }}</span>
+                        </div>
+                        {% if skill.is_verified %}
+                            <span class="pill pill-green">Verified</span>
+                        {% endif %}
                     </div>
-                    {% if skill.is_verified %}
-                        <span style="color: var(--success); font-size: 11px; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                    
+                    <!-- Hover Action -->
+                    {% if skill.user_id == current_user %}
+                        <form action="/skills/delete/{{ skill._id }}" method="POST" onsubmit="return confirm('Disconnect this skill?');">
+                            <button type="submit" class="btn req-btn" style="background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); height: 100%;">
+                                Remove listing
+                            </button>
+                        </form>
+                    {% else %}
+                        {% if session.get('user_role') in ['learn', 'learner', 'both'] %}
+                        <form action="/sessions/request" method="POST">
+                            <input type="hidden" name="provider_id" value="{{ skill.user_id }}">
+                            <input type="hidden" name="skill_id" value="{{ skill._id }}">
+                            <button type="submit" class="btn btn-primary req-btn" style="height: 100%;">
+                                Request Session &rarr;
+                            </button>
+                        </form>
+                        {% endif %}
                     {% endif %}
                 </div>
-            </div>
-            
-            <div class="skill-card-action">
-                {% if skill.user_id == current_user %}
-                    <form action="/skills/delete/{{ skill._id }}" method="POST" onsubmit="return confirm('Disconnect this skill node?');">
-                        <button type="submit" class="btn btn-ghost req-btn" style="color: var(--danger); border-color: rgba(239,68,68,0.3);">
-                            Drop Node
-                        </button>
-                    </form>
-                {% else %}
-                    {% if session.get('user_role') in ['learn', 'learner', 'both'] %}
-                    <form action="/sessions/request" method="POST">
-                        <input type="hidden" name="provider_id" value="{{ skill.user_id }}">
-                        <input type="hidden" name="skill_id" value="{{ skill._id }}">
-                        <button type="submit" class="btn btn-primary req-btn">
-                            Request Session <i class="fa-solid fa-arrow-right" style="margin-left: 4px; font-size: 11px;"></i>
-                        </button>
-                    </form>
-                    {% endif %}
-                {% endif %}
             </div>
         </div>
         {% endfor %}
     {% else %}
-        <div class="card fade-in" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; text-align: center;">
-            <i class="fa-solid fa-satellite-dish" style="font-size: 32px; color: var(--t3); margin-bottom: 16px;"></i>
-            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No Signals Detected</h4>
-            <p style="font-size: 13px; color: var(--t2); max-width: 300px;">The network is currently empty. Adjust your scanners or check back later.</p>
+        <div class="card fade-in" style="grid-column: 1 / -1; padding: 60px; text-align: center;">
+            <p style="color: var(--t2); font-size: 14px;">No skills mapped to network currently.</p>
         </div>
     {% endif %}
 </div>
