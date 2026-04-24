@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block title %}Sessions - Skillify{% endblock %}
+
+{% block content %}
+<style>
+    .session-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .session-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        border-color: var(--border2);
+    }
+    .session-avatar {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        background: var(--bg3);
+        border: 1px solid var(--border2);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 15px; color: var(--t1);
+        flex-shrink: 0;
+    }
+    .section-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 36px 0 24px;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        background: var(--bg3);
+        border: 1.5px dashed var(--border2);
+        border-radius: 12px;
+        color: var(--t2);
+        font-size: 13px;
+    }
+    .pill-tab-row { display: flex; gap: 8px; margin-bottom: 24px; }
+    .pill-tab {
+        padding: 6px 16px; border-radius: 20px; font-size: 12px;
+        font-weight: 500; cursor: pointer; border: 1px solid var(--border);
+        color: var(--t2); background: var(--bg2);
+        transition: all 0.15s;
+    }
+    .pill-tab.active { background: var(--t1); color: #fff; border-color: var(--t1); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+</style>
+
+<div class="fade-in" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h6 class="section-heading">Network Activity</h6>
+        <h1 style="font-size: 32px; font-weight: 700; letter-spacing: -1px;">Session <em>Hub</em></h1>
+    </div>
+</div>
+
+<!-- Tab Pills -->
+<div class="pill-tab-row fade-in">
+    <div class="pill-tab active" onclick="switchTab('incoming', this)">
+        Incoming
+        {% set pending_count = incoming | selectattr('status', 'equalto', 'pending') | list | length %}
+        {% if pending_count > 0 %}
+        <span style="background: var(--red); color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 10px; margin-left: 4px;">{{ pending_count }}</span>
+        {% endif %}
+    </div>
+    <div class="pill-tab" onclick="switchTab('outgoing', this)">Outgoing</div>
+</div>
+
+<!-- INCOMING PANEL -->
+<div class="tab-panel active" id="panel-incoming">
+    {% if incoming %}
+        {% for s in incoming %}
+        <div class="session-card fade-in">
+            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                <div class="session-avatar">{{ s.requester_name[0] | upper }}</div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 2px;">
+                        {{ s.requester_name }}
+                        <span style="font-weight: 400; color: var(--t3); font-size: 12px;">requested a session</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--t2);">
+                        {% if s.scheduled_at %}
+                            Scheduled: {{ s.scheduled_at }}
+                        {% else %}
+                            Time not specified
+                        {% endif %}
+                    </div>
+                    <div style="margin-top: 6px;">
+                        <span class="pill
+                            {% if s.status == 'pending' %}pill-amber
+                            {% elif s.status == 'accepted' %}pill-blue
+                            {% elif s.status == 'completed' %}pill-green
+                            {% else %}pill-neutral{% endif %}">
+                            {{ s.status | title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0;">
+                {% if s.status == 'pending' %}
+                    <form action="/sessions/{{ s._id }}/accept" method="POST">
+                        <button type="submit" class="btn btn-primary" style="padding: 7px 16px; font-size: 12px; border-radius: 8px;">
+                            Accept
+                        </button>
+                    </form>
+                {% elif s.status == 'accepted' %}
+                    {% if s.meeting_link %}
+                        <a href="{{ s.meeting_link }}" target="_blank" class="btn btn-primary" style="padding: 7px 16px; font-size: 12px; border-radius: 8px; background: var(--green); display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-video"></i> Join Session
+                        </a>
+                        <a href="/sessions/{{ s._id }}/meeting-setup" style="font-size: 11px; color: var(--t3);">Edit link</a>
+                    {% else %}
+                        <a href="/sessions/{{ s._id }}/meeting-setup" class="btn btn-outline" style="padding: 7px 16px; font-size: 12px; border-radius: 8px;">
+                            <i class="fa-solid fa-link"></i> Add meeting link
+                        </a>
+                    {% endif %}
+                    <form action="/sessions/{{ s._id }}/complete" method="POST">
+                        <button type="submit" class="btn btn-ghost" style="padding: 5px 12px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border);">
+                            Mark Complete
+                        </button>
+                    </form>
+                {% elif s.status == 'completed' %}
+                    <span class="pill pill-green"><i class="fa-solid fa-check"></i> Done</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state fade-in">
+            <i class="fa-regular fa-bell" style="font-size: 24px; margin-bottom: 12px; display: block; color: var(--t3);"></i>
+            No incoming session requests yet.
+        </div>
+    {% endif %}
+</div>
+
+<!-- OUTGOING PANEL -->
+<div class="tab-panel" id="panel-outgoing">
+    {% if outgoing %}
+        {% for s in outgoing %}
+        <div class="session-card fade-in">
+            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                <div class="session-avatar" style="background: var(--bg3); color: var(--t2);">{{ s.provider_name[0] | upper }}</div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 2px;">
+                        Request to <span style="color: var(--t1);">{{ s.provider_name }}</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--t2);">
+                        {% if s.scheduled_at %}Scheduled: {{ s.scheduled_at }}{% else %}No time specified{% endif %}
+                    </div>
+                    <div style="margin-top: 6px;">
+                        <span class="pill
+                            {% if s.status == 'pending' %}pill-amber
+                            {% elif s.status == 'accepted' %}pill-blue
+                            {% elif s.status == 'completed' %}pill-green
+                            {% else %}pill-neutral{% endif %}">
+                            {{ s.status | title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0;">
+                {% if s.status == 'accepted' %}
+                    {% if s.meeting_link %}
+                        <a href="{{ s.meeting_link }}" target="_blank" class="btn btn-primary" style="padding: 7px 16px; font-size: 12px; border-radius: 8px; background: var(--green); display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-video"></i> Join Session
+                        </a>
+                        {% set mt = s.meeting_type | default('meeting') | replace('_', ' ') | title %}
+                        <span style="font-size: 11px; color: var(--t3);">via {{ mt }}</span>
+                    {% else %}
+                        <span style="font-size: 12px; color: var(--amber);">
+                            <i class="fa-solid fa-clock"></i> Awaiting meeting link...
+                        </span>
+                    {% endif %}
+                {% elif s.status == 'completed' and not s.feedback_given %}
+                    <a href="/sessions/{{ s._id }}/feedback" class="btn btn-outline" style="padding: 7px 16px; font-size: 12px; border-radius: 8px;">
+                        Leave Feedback
+                    </a>
+                {% elif s.status == 'completed' and s.feedback_given and s.certificate_issued %}
+                    <a href="/certificates/download/{{ s.certificate_id }}" class="btn btn-primary" style="padding: 7px 16px; font-size: 12px; border-radius: 8px; background: var(--blue);">
+                        <i class="fa-solid fa-file-arrow-down"></i> View Certificate
+                    </a>
+                {% elif s.status == 'completed' and s.certificate_issued %}
+                    <span class="pill pill-green"><i class="fa-solid fa-certificate"></i> Certified</span>
+                {% elif s.status == 'pending' %}
+                    <span style="font-size: 12px; color: var(--t3);">Awaiting acceptance...</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state fade-in">
+            <i class="fa-regular fa-paper-plane" style="font-size: 24px; margin-bottom: 12px; display: block; color: var(--t3);"></i>
+            You haven't requested any sessions yet. <a href="/browse_skills" style="color: var(--t1); font-weight: 600;">Browse skills →</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function switchTab(name, el) {
+    document.querySelectorAll('.pill-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+}
+</script>
+{% endblock %}

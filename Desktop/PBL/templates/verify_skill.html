@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-    /* Compound Step Progress Indicator */
     .step-tracker {
         display: flex;
         justify-content: space-between;
@@ -31,26 +30,48 @@
     .step-future { background: var(--bg3); color: var(--t3); border: 2px solid var(--border); }
     .step-active { background: var(--t1); color: #fff; border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--t1); }
     .step-done   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-    
+
     .upload-zone {
         border: 1.5px dashed var(--border2);
         border-radius: 12px;
         background: var(--bg3);
-        padding: 32px 20px;
+        padding: 24px 20px;
         text-align: center;
         transition: background 0.2s, border-color 0.2s;
-        display: flex; flex-direction: column; align-items: center; gap: 8px;
+        cursor: pointer;
     }
-    .upload-zone:hover {
-        background: var(--border);
-        border-color: var(--t3);
+    .upload-zone:hover { background: var(--border); border-color: var(--t3); }
+
+    /* Proof section — shown/hidden by JS */
+    .proof-section { display: none; }
+    .proof-section.active { display: block; }
+
+    .proof-hint {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 12px;
+        color: var(--t2);
+        margin-bottom: 20px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
     }
-    .upload-zone input { width: 100%; border: none; background: transparent; padding: 0; text-align: center; }
+
+    /* Custom select arrow */
+    select.form-control {
+        appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b6b63%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 14px top 50%;
+        background-size: 10px auto;
+    }
 </style>
 
 <div class="fade-in" style="text-align: center; max-width: 500px; margin: 0 auto 40px;">
     <h1 class="hero-heading" style="font-size: 40px; margin-bottom: 12px;">Node <em>Verification</em></h1>
-    <p style="font-size: 14px; color: var(--t2);">Submit proofs to upgrade your account to Verified Provider status. Trust is cryptographically backed.</p>
+    <p style="font-size: 14px; color: var(--t2);">Submit proof to become a Verified Provider. Required proof varies by skill type.</p>
 </div>
 
 <!-- Step Indicator -->
@@ -60,46 +81,130 @@
     <div class="step-node step-future">3</div>
 </div>
 
-<div class="card fade-in" style="max-width: 500px; margin: 0 auto; padding: 32px;">
-    <form action="/verify/" method="POST">
-        
-        <div class="form-group mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
-            <h6 class="section-heading">Identify Parameters</h6>
-            <label class="field-label">Primary Sector</label>
-            <select name="category" class="form-control" required style="appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b6b63%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 10px auto;">
-                <option value="" disabled selected>Select industry standard</option>
-                <option value="Web Development">Web Development</option>
-                <option value="Data Science">Data Science</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Other">Other</option>
+<div class="card fade-in" style="max-width: 520px; margin: 0 auto; padding: 32px;">
+    <form method="POST" action="/verify-skill" enctype="multipart/form-data">
+
+        <!-- ── Step 1: Identity ── -->
+        <div class="form-group" style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border);">
+            <h6 class="section-heading">1. Identity</h6>
+
+            <label class="field-label">Email Address</label>
+            <input type="email" name="email" class="form-control" placeholder="Your registered email" required style="margin-bottom: 12px;">
+
+            <label class="field-label">Skill Name</label>
+            <input type="text" name="skill_name" id="skillNameInput" class="form-control" placeholder="e.g. Python, Graphic Design, Photography" required style="margin-bottom: 12px;">
+
+            <label class="field-label">Skill Category</label>
+            <select name="category" id="categorySelect" class="form-control" required>
+                <option value="" disabled selected>Select a category to load proof fields →</option>
+                <optgroup label="Technical Skills">
+                    <option value="Web Development">Web Development</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Machine Learning">Machine Learning</option>
+                    <option value="Mobile Development">Mobile Development</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Cybersecurity">Cybersecurity</option>
+                </optgroup>
+                <optgroup label="Creative &amp; Other Skills">
+                    <option value="Design">Design</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Other">Other</option>
+                </optgroup>
             </select>
         </div>
 
-        <div class="form-group mb-4 pb-4" style="border-bottom: 1px solid var(--border);">
-            <h6 class="section-heading">Automated Scanner</h6>
-            <label class="field-label">GitHub Source Code Profile</label>
-            <input type="url" name="github_url" class="form-control" placeholder="https://github.com/...">
-        </div>
-        
-        <div class="form-group mb-4">
-            <h6 class="section-heading">Manual Proof Blocks</h6>
-            
-            <div style="margin-bottom: 16px;">
-                <label class="field-label">Portfolio URL</label>
-                <input type="url" name="portfolio_url" class="form-control" placeholder="https://registry.link">
+        <!-- ── Step 2a: Technical Proof Fields ── -->
+        <div class="proof-section" id="technicalProofs">
+            <h6 class="section-heading">2. Proof of Technical Expertise</h6>
+
+            <div class="proof-hint">
+                <i class="fa-solid fa-circle-info" style="color: var(--blue); flex-shrink: 0; margin-top: 1px;"></i>
+                <span>For <strong>technical skills</strong>, a GitHub profile or repo is the strongest proof. Portfolio and certificate are bonus signals.</span>
             </div>
-            
-            <label class="field-label">Credential Hyperlink</label>
-            <div class="upload-zone">
+
+            <label class="field-label">GitHub Profile or Repository <span style="color: var(--red);">*</span></label>
+            <input type="text" name="github" class="form-control" placeholder="https://github.com/yourusername" style="margin-bottom: 12px;">
+
+            <label class="field-label">Portfolio / Personal Website</label>
+            <input type="text" name="portfolio" class="form-control" placeholder="https://yourportfolio.com" style="margin-bottom: 12px;">
+
+            <label class="field-label">Experience Description <span style="color: var(--red);">*</span></label>
+            <textarea name="experience" rows="4" class="form-control" style="margin-bottom: 12px;" placeholder="e.g. 2 years building REST APIs in Python, contributed to 3 open-source projects, deployed 5 production apps..."></textarea>
+
+            <label class="field-label">Upload Certificate (optional)</label>
+            <div class="upload-zone" onclick="document.getElementById('certFile').click()">
                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 20px; color: var(--t2);"></i>
-                <div style="font-weight: 500; font-size: 13px; color: var(--t1);">Drop file or click to browse</div>
-                <div style="font-size: 11px; color: var(--t3);">Supports standard URI cert formats</div>
-                <input type="url" name="cert_url" class="form-control" style="background: var(--bg2); margin-top: 8px; text-align: left;" placeholder="Paste credential link...">
+                <div style="font-weight: 500; font-size: 13px; color: var(--t1); margin-top: 6px;">Click to browse</div>
+                <div style="font-size: 11px; color: var(--t3);">PDF, PNG, JPG</div>
+                <div id="techFileName" style="font-size: 12px; color: var(--green); margin-top: 6px;"></div>
             </div>
+            <input type="file" id="certFile" name="certificate" accept=".pdf,.png,.jpg,.jpeg" style="display:none;" onchange="document.getElementById('techFileName').textContent = this.files[0]?.name || ''">
         </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px;">Transmit request</button>
+
+        <!-- ── Step 2b: Creative / Other Proof Fields ── -->
+        <div class="proof-section" id="creativeProofs">
+            <h6 class="section-heading">2. Proof of Creative Expertise</h6>
+
+            <div class="proof-hint">
+                <i class="fa-solid fa-circle-info" style="color: var(--amber); flex-shrink: 0; margin-top: 1px;"></i>
+                <span>For <strong>creative / other skills</strong>, a portfolio link and certificate carry the most weight. GitHub is optional.</span>
+            </div>
+
+            <label class="field-label">Portfolio / Behance / Dribbble / LinkedIn <span style="color: var(--red);">*</span></label>
+            <input type="text" name="portfolio" class="form-control" placeholder="https://behance.net/yourprofile" style="margin-bottom: 12px;">
+
+            <label class="field-label">Experience Description <span style="color: var(--red);">*</span></label>
+            <textarea name="experience" rows="4" class="form-control" style="margin-bottom: 12px;" placeholder="e.g. 3 years of UI/UX design, worked with 10+ clients, certified in Adobe XD, specializing in mobile app design..."></textarea>
+
+            <label class="field-label">Upload Certificate / Credential <span style="color: var(--red);">*</span></label>
+            <div class="upload-zone" onclick="document.getElementById('certFileCreative').click()">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 20px; color: var(--t2);"></i>
+                <div style="font-weight: 500; font-size: 13px; color: var(--t1); margin-top: 6px;">Click to browse</div>
+                <div style="font-size: 11px; color: var(--t3);">PDF, PNG, JPG — certificates, diplomas, awards</div>
+                <div id="creativeFileName" style="font-size: 12px; color: var(--green); margin-top: 6px;"></div>
+            </div>
+            <input type="file" id="certFileCreative" name="certificate" accept=".pdf,.png,.jpg,.jpeg" style="display:none;" onchange="document.getElementById('creativeFileName').textContent = this.files[0]?.name || ''">
+
+            <label class="field-label" style="margin-top: 12px;">GitHub / Code Profile (optional)</label>
+            <input type="text" name="github" class="form-control" placeholder="https://github.com/yourusername (optional)">
+        </div>
+
+        <!-- Submit (hidden until category chosen) -->
+        <div id="submitBlock" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px; padding: 12px;">
+                Submit for AI Verification →
+            </button>
+            <p style="font-size: 11px; color: var(--t3); text-align: center; margin-top: 10px;">
+                Our verification engine scores your submission instantly.
+            </p>
+        </div>
+
     </form>
 </div>
+
+<script>
+    const categorySelect   = document.getElementById('categorySelect');
+    const technicalProofs  = document.getElementById('technicalProofs');
+    const creativeProofs   = document.getElementById('creativeProofs');
+    const submitBlock      = document.getElementById('submitBlock');
+
+    const TECHNICAL = new Set([
+        'Web Development', 'Data Science', 'Machine Learning',
+        'Mobile Development', 'DevOps', 'Cybersecurity'
+    ]);
+
+    categorySelect.addEventListener('change', function () {
+        const val = this.value;
+        if (!val) return;
+
+        if (TECHNICAL.has(val)) {
+            technicalProofs.classList.add('active');
+            creativeProofs.classList.remove('active');
+        } else {
+            creativeProofs.classList.add('active');
+            technicalProofs.classList.remove('active');
+        }
+        submitBlock.style.display = 'block';
+    });
+</script>
 {% endblock %}

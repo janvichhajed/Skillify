@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Setup Meeting - Skillify{% endblock %}
+
+{% block content %}
+<style>
+    .meeting-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 40px;
+        max-width: 480px;
+        margin: 0 auto;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .platform-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .platform-btn {
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        cursor: pointer;
+        background: var(--bg3);
+        transition: all 0.15s;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--t2);
+    }
+    .platform-btn:hover { border-color: var(--border2); background: var(--bg2); color: var(--t1); }
+    .platform-btn.selected { border-color: var(--t1); background: var(--t1); color: #fff; }
+    .platform-icon { font-size: 20px; margin-bottom: 6px; display: block; }
+</style>
+
+<div class="fade-in" style="text-align: center; max-width: 480px; margin: 0 auto 32px;">
+    <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: var(--green-bg); border: 1px solid var(--green-border); margin-bottom: 16px;">
+        <i class="fa-solid fa-check" style="color: var(--green); font-size: 18px;"></i>
+    </div>
+    <h1 style="font-size: 28px; font-weight: 700; letter-spacing: -1px; margin-bottom: 8px;">Session <em>Accepted</em></h1>
+    <p style="font-size: 14px; color: var(--t2);">Share a meeting link so the learner can join your session.</p>
+</div>
+
+<div class="meeting-card fade-in">
+    <form method="POST" action="/sessions/{{ session_id }}/meeting-setup">
+        
+        <!-- Platform Picker -->
+        <h6 class="section-heading">Choose Platform</h6>
+        <div class="platform-grid" id="platformGrid">
+            <div class="platform-btn selected" onclick="selectPlatform(this, 'google_meet')">
+                <span class="platform-icon">📹</span>
+                Google Meet
+            </div>
+            <div class="platform-btn" onclick="selectPlatform(this, 'zoom')">
+                <span class="platform-icon">🎥</span>
+                Zoom
+            </div>
+            <div class="platform-btn" onclick="selectPlatform(this, 'ms_teams')">
+                <span class="platform-icon">💼</span>
+                MS Teams
+            </div>
+            <div class="platform-btn" onclick="selectPlatform(this, 'discord')">
+                <span class="platform-icon">🎮</span>
+                Discord
+            </div>
+            <div class="platform-btn" onclick="selectPlatform(this, 'whereby')">
+                <span class="platform-icon">🌐</span>
+                Whereby
+            </div>
+            <div class="platform-btn" onclick="selectPlatform(this, 'other')">
+                <span class="platform-icon">🔗</span>
+                Other
+            </div>
+        </div>
+        <input type="hidden" name="meeting_type" id="meetingTypeInput" value="google_meet">
+
+        <!-- Meeting Link -->
+        <div class="form-group" style="margin-bottom: 16px;">
+            <h6 class="section-heading" style="margin-top: 8px;">Meeting Link</h6>
+            <input type="url" name="meeting_link" class="form-control" 
+                   placeholder="https://meet.google.com/xxx-xxxx-xxx" required
+                   id="meetingLinkInput">
+        </div>
+
+        <!-- Scheduled Time -->
+        <div class="form-group" style="margin-bottom: 28px;">
+            <label class="field-label">Date &amp; Time</label>
+            <input type="datetime-local" name="scheduled_time" class="form-control"
+                   value="{{ sess.scheduled_at if sess.scheduled_at else '' }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px; padding: 12px;">
+            Send to Learner &rarr;
+        </button>
+
+        <a href="/sessions-dashboard" style="display: block; text-align: center; margin-top: 14px; font-size: 13px; color: var(--t2);">
+            Skip for now &rarr;
+        </a>
+    </form>
+</div>
+
+<script>
+const placeholders = {
+    google_meet: 'https://meet.google.com/xxx-xxxx-xxx',
+    zoom:        'https://zoom.us/j/123456789',
+    ms_teams:    'https://teams.microsoft.com/l/meetup-join/...',
+    discord:     'https://discord.gg/your-invite',
+    whereby:     'https://whereby.com/your-room',
+    other:       'https://...'
+};
+function selectPlatform(el, type) {
+    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('meetingTypeInput').value = type;
+    document.getElementById('meetingLinkInput').placeholder = placeholders[type] || 'https://...';
+}
+</script>
+{% endblock %}

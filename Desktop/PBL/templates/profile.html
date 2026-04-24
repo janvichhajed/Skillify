@@ -79,7 +79,7 @@
             {% if user and user.verified %}
                 <span class="pill pill-green"><i class="fa-solid fa-shield-check"></i> Account Verified</span>
             {% else %}
-                <a href="/verify/" class="btn btn-outline" style="font-size: 13px; padding: 6px 12px;">Submit Verification Data</a>
+                <a href="/verify-skill" class="btn btn-outline" style="font-size: 13px; padding: 6px 12px;">Submit Verification Data</a>
             {% endif %}
         </div>
     </div>
@@ -93,11 +93,12 @@
             <div class="metric-row">
                 <span style="font-size: 13px; color: var(--t2); font-weight: 500;">Credibility Score</span>
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    {% if user and user.credibility_score %}
-                        <span style="font-size: 20px; font-weight: 700; color: var(--t1);">{{ user.credibility_score }}</span>
+                    {% if user and user.credibility_score is not none %}
+                        {% set display_score = user.credibility_score if user.credibility_score <= 10 else user.credibility_score / 10 %}
+                        <span style="font-size: 20px; font-weight: 700; color: var(--t1);">{{ display_score | round(1) }}<span style="font-size: 14px; color: var(--t3); font-weight: 500;">/10</span></span>
                         <i class="fa-solid fa-star" style="color: #f59e0b; font-size: 14px;"></i>
                     {% else %}
-                        <span style="font-size: 20px; font-weight: 700; color: var(--t3);">0</span>
+                        <span style="font-size: 20px; font-weight: 700; color: var(--t3);">0<span style="font-size: 14px; color: var(--t3); font-weight: 500;">/10</span></span>
                     {% endif %}
                 </div>
             </div>

@@ -67,4 +67,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000 + (idx * 500));
     });
 
+    // 6. Notification bell polling (every 15 seconds)
+    function pollNotifications() {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(data => {
+                const badge        = document.getElementById('notif-badge');
+                const sidebarBadge = document.getElementById('sidebar-notif-badge');
+                if (!badge) return;
+                if (data.count > 0) {
+                    badge.textContent  = data.count;
+                    badge.style.display = 'flex';
+                    if (sidebarBadge) {
+                        sidebarBadge.textContent  = data.count;
+                        sidebarBadge.style.display = 'inline';
+                    }
+                } else {
+                    badge.style.display = 'none';
+                    if (sidebarBadge) sidebarBadge.style.display = 'none';
+                }
+            })
+            .catch(() => {});  // silently fail if not logged in
+    }
+
+    // Run immediately + every 15s
+    if (document.getElementById('notif-badge')) {
+        pollNotifications();
+        setInterval(pollNotifications, 15000);
+    }
+
 });

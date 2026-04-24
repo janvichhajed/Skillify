@@ -26,7 +26,43 @@ def request_session():
 @session_bp.route("/<session_id>/accept", methods=["POST"])
 def accept_session(session_id):
     sessions.update_one({"_id": ObjectId(session_id)}, {"$set": {"status": "accepted"}})
-    return redirect("/dashboard")
+    # After accepting, redirect to meeting link setup
+    return redirect(f"/sessions/{session_id}/meeting-setup")
+
+@session_bp.route("/<session_id>/meeting-setup", methods=["GET", "POST"])
+def meeting_setup(session_id):
+    if "user_id" not in session:
+        return redirect("/auth/login")
+    sess = sessions.find_one({"_id": ObjectId(session_id)})
+    if not sess:
+        return "Session not found", 404
+    if request.method == "POST":
+        meeting_link    = request.form.get("meeting_link", "").strip()
+        meeting_type    = request.form.get("meeting_type", "google_meet")
+        scheduled_time  = request.form.get("scheduled_time", "").strip()
+        sessions.update_one(
+            {"_id": ObjectId(session_id)},
+            {"$set": {
+                "meeting_link":   meeting_link,
+                "meeting_type":   meeting_type,
+                "scheduled_at":   scheduled_time
+            }}
+        )
+        from flask import flash
+        flash("Meeting details sent to the learner.", "success")
+        return redirect("/sessions-dashboard")
+    return render_template("meeting_setup.html", session_id=session_id, sess=sess, current_user=session)
+
+@session_bp.route("/<session_id>/set-link", methods=["POST"])
+def set_meeting_link(session_id):
+    """Quick inline update — provider can update link anytime while status=accepted."""
+    meeting_link  = request.form.get("meeting_link", "").strip()
+    meeting_type  = request.form.get("meeting_type", "google_meet")
+    sessions.update_one(
+        {"_id": ObjectId(session_id)},
+        {"$set": {"meeting_link": meeting_link, "meeting_type": meeting_type}}
+    )
+    return redirect("/sessions-dashboard")
 
 @session_bp.route("/<session_id>/complete", methods=["POST"])
 def complete_session(session_id):
@@ -57,6 +93,8 @@ def submit_feedback(session_id):
         sessions.update_one({"_id": ObjectId(session_id)}, {"$set": {"feedback_given": True}})
         calculate_credibility_score(sess["provider_id"], db)
         
-        return redirect("/dashboard")
+        # Auto-generate certificate now that feedback is given!
+        from routes.certificate_routes import generate
+        return generate(session_id)
         
     return render_template("feedback.html", session_id=session_id)

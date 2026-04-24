@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .admin-table { width: 100%; border-collapse: collapse; margin-top: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .admin-table th { background: var(--bg3); padding: 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3); border-bottom: 1px solid var(--border); }
+    .admin-table td { padding: 16px; font-size: 13px; color: var(--t1); border-bottom: 1px solid var(--border); }
+    .admin-table tr:last-child td { border-bottom: none; }
+</style>
+
+<div class="fade-in mb-4">
+    <h1 class="hero-heading" style="font-size: 40px; margin-bottom: 8px;">Verification <em>Requests</em></h1>
+    <p style="font-size: 14px; color: var(--t2);">Admin terminal for Node Approvals (AI overrides)</p>
+</div>
+
+<div class="fade-in">
+    <table class="admin-table">
+        <tr>
+            <th>Email</th>
+            <th>Skill</th>
+            <th>GitHub</th>
+            <th>AI Decision</th>
+            <th>Confidence</th>
+            <th>Current Status</th>
+            <th>Action</th>
+        </tr>
+        {% for p in proofs %}
+        <tr>
+            <td style="font-weight: 500;">{{ p.email }}</td>
+            <td>{{ p.skill_name }}</td>
+            <td>{% if p.github_link %}<a href="{{ p.github_link }}" target="_blank" style="color: var(--blue);">Link &nearr;</a>{% else %}—{% endif %}</td>
+            <td><span class="pill pill-neutral">{{ p.ai_decision | default('—') }}</span></td>
+            <td style="font-family: monospace;">{{ p.ai_confidence | default('—') }}%</td>
+            <td>
+                {% if p.status == 'Verified' %}<span class="pill pill-green">{{ p.status }}</span>
+                {% elif p.status == 'Rejected' %}<span class="pill pill-red">{{ p.status }}</span>
+                {% else %}<span class="pill pill-amber">{{ p.status }}</span>{% endif %}
+            </td>
+            <td>
+                <form method="POST" action="/admin/update-status" style="display: flex; gap: 8px; align-items: center;">
+                    <input type="hidden" name="email" value="{{ p.email }}">
+                    <input type="hidden" name="skill_name" value="{{ p.skill_name }}">
+                    <select name="status" class="form-control" style="padding: 6px; font-size: 12px;">
+                        <option value="Pending Review">Pending Review</option>
+                        <option value="Verified">Verified</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" style="text-align: center; color: var(--t3); padding: 40px;">No verification proofs recorded in the ledger.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

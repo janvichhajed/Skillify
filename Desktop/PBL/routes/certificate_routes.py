@@ -52,8 +52,11 @@ def generate(session_id):
     )
     certificates.insert_one(new_cert.to_dict())
     
-    # Mark session as issued
-    sessions.update_one({"_id": ObjectId(session_id)}, {"$set": {"certificate_issued": True}})
+    # Mark session as issued and store ID
+    sessions.update_one(
+        {"_id": ObjectId(session_id)}, 
+        {"$set": {"certificate_issued": True, "certificate_id": cert_id}}
+    )
     
     return redirect("/dashboard")
 
@@ -62,18 +65,4 @@ def download_cert(cert_id):
     filename = f"certificate_{cert_id}.pdf"
     return send_from_directory(current_app.config["CERTIFICATES_FOLDER"], filename)
 
-@certificate_bp.route("/verify", methods=["GET", "POST"])
-def verify_page():
-    result = None
-    cert_data = None
-    
-    if request.method == "POST":
-        cert_id = request.form.get("certificate_id")
-        is_valid, cert_data = verify_system_certificate(cert_id, db)
-        
-        if is_valid:
-            result = "Valid Certificate"
-        else:
-            result = "Invalid Certificate"
-            
-    return render_template("verify_certificate.html", result=result, cert_data=cert_data)
+

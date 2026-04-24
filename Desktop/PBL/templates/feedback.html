@@ -3,75 +3,55 @@
 
 {% block content %}
 <style>
-    /* Compound Radio Star System */
-    .rating-container { display: flex; gap: 4px; flex-direction: row-reverse; justify-content: flex-end; margin-bottom: 24px; }
-    .rating-container input[type="radio"] { display: none; }
-    .rating-container label {
-        color: var(--border2);
-        font-size: 28px;
-        cursor: pointer;
-        transition: color 0.2s, transform 0.2s;
-    }
-    
-    /* Hover effect rules - fills stars left to right */
-    .rating-container label:hover,
-    .rating-container label:hover ~ label,
-    .rating-container input[type="radio"]:checked ~ label {
-        color: #f59e0b; /* Amber */
-    }
-
-    .rating-container label:hover {
-        transform: scale(1.1);
-    }
-    
-    .feedback-box {
+    .feedback-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 32px;
         background: var(--bg2);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 40px;
-        max-width: 500px;
-        margin: 0 auto;
         box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .rating-slider {
+        width: 100%;
+        margin: 20px 0;
+        accent-color: var(--t1);
+    }
+    .rating-display {
+        font-size: 32px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 10px;
+        color: var(--t1);
     }
 </style>
 
-<div class="fade-in mb-4" style="text-align: center; max-width: 500px; margin: 0 auto 32px;">
-    <h1 class="hero-heading" style="font-size: 40px; margin-bottom: 8px;">Session <em>Feedback</em></h1>
-    <p style="font-size: 14px; color: var(--t2);">Your qualitative analysis finalizes the smart contract.</p>
-</div>
+<div class="feedback-container fade-in">
+    <h2 class="hero-heading" style="font-size: 28px; margin-bottom: 8px;">Rate your <em>Session</em></h2>
+    <p style="font-size: 14px; color: var(--t2); margin-bottom: 24px;">How was your experience learning from your mentor? Your feedback directly impacts their credibility score.</p>
 
-<div class="feedback-box fade-in">
-    <form action="/sessions/{{ session_id }}/feedback" method="POST">
-        
-        <h6 class="section-heading">Integrity Score</h6>
-        <div class="rating-container">
-            <input type="radio" id="star5" name="rating" value="5" required />
-            <label for="star5"><i class="fa-solid fa-star"></i></label>
-            
-            <input type="radio" id="star4" name="rating" value="4" />
-            <label for="star4"><i class="fa-solid fa-star"></i></label>
-            
-            <input type="radio" id="star3" name="rating" value="3" />
-            <label for="star3"><i class="fa-solid fa-star"></i></label>
-            
-            <input type="radio" id="star2" name="rating" value="2" />
-            <label for="star2"><i class="fa-solid fa-star"></i></label>
-            
-            <input type="radio" id="star1" name="rating" value="1" />
-            <label for="star1"><i class="fa-solid fa-star"></i></label>
+    <form method="POST">
+        <div class="rating-display" id="ratingValue">5</div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--t3); margin-bottom: 4px;">
+            <span>Poor</span>
+            <span>Excellent</span>
         </div>
+        <input type="range" name="rating" min="1" max="10" value="5" class="rating-slider" id="ratingSlider">
+        
+        <label class="field-label" style="margin-top: 24px;">Extra Comments (Optional)</label>
+        <textarea name="review_text" rows="4" class="form-control" placeholder="Share any specific details about what you learned..."></textarea>
 
-        <div class="form-group mb-4">
-            <h6 class="section-heading">Qualitative Report</h6>
-            <textarea name="comments" class="form-control" rows="4" placeholder="Detail the outcome of your session interaction..." required style="resize: vertical;"></textarea>
-        </div>
-        
-        <div style="background: var(--bg3); padding: 12px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; margin-bottom: 24px;">
-            <i class="fa-solid fa-cube" style="color: var(--t3); margin-top: 2px;"></i>
-            <p style="font-size: 11px; color: var(--t2); margin: 0;">Submitting this record will finalize the session variables and permit certificate minting.</p>
-        </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Commit to Registry</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px; padding: 12px;">
+            Submit Feedback & Get Certificate &rarr;
+        </button>
     </form>
 </div>
+
+<script>
+    const slider = document.getElementById('ratingSlider');
+    const display = document.getElementById('ratingValue');
+    slider.oninput = function() {
+        display.innerHTML = this.value;
+    }
+</script>
 {% endblock %}

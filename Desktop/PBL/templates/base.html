@@ -44,10 +44,14 @@
         <div class="nav-links">
             {% if not session.get('user_id') %}
                 <a href="{{ url_for('skill.browse_skills') }}">Explore</a>
-                <a href="/certificates/verify">Verify</a>
                 <a href="{{ url_for('auth.login_page') }}" class="btn btn-outline btn-pill" style="padding: 6px 16px;">Sign in</a>
                 <a href="{{ url_for('auth.signup_page') }}" class="btn btn-primary btn-pill" style="padding: 6px 16px;">Get started &rarr;</a>
             {% else %}
+                <!-- Notification Bell -->
+                <a href="/sessions-dashboard" id="notif-bell" style="position: relative; display: flex; align-items: center; color: var(--t2);" title="Session requests">
+                    <i class="fa-regular fa-bell" style="font-size: 17px;"></i>
+                    <span id="notif-badge" style="display:none; position: absolute; top: -5px; right: -7px; background: #dc2626; color: #fff; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; border: 2px solid var(--bg);"></span>
+                </a>
                 <a href="{{ url_for('profile_page') }}" style="display: flex; align-items: center; gap: 6px;">
                     <span style="font-size: 13px; font-weight: 600;">{{ session.get('user_name', 'User') }}</span>
                     <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--t3);"></i>
@@ -61,13 +65,16 @@
         {% if session.get('user_id') %}
         <aside class="sidebar fade-in">
             <h6 class="section-heading" style="margin-top: 12px; margin-bottom: 8px;">Network</h6>
-            <a class="sidebar-link" href="{{ url_for('dashboard') }}">Overview</a>
-            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}">Directory</a>
-            <a class="sidebar-link" href="/certificates/verify">Validator</a>
+            <a class="sidebar-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="sidebar-link" href="/sessions-dashboard">
+                My Sessions
+                <span id="sidebar-notif-badge" style="display:none; background: #dc2626; color:#fff; border-radius:10px; padding: 1px 6px; font-size:10px; margin-left: auto;"></span>
+            </a>
+            <a class="sidebar-link" href="{{ url_for('skill.browse_skills') }}">Browse Skills</a>
             
             <h6 class="section-heading" style="margin-top: 24px; margin-bottom: 8px;">Personal</h6>
-            <a class="sidebar-link" href="{{ url_for('profile_page') }}">Identity Profile</a>
-            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="margin-top: 12px; color: var(--red);">Sign out</a>
+            <a class="sidebar-link" href="{{ url_for('profile_page') }}">My Profile</a>
+            <a class="sidebar-link" href="{{ url_for('auth.logout') }}" style="margin-top: 12px; color: var(--red);">Log Out</a>
         </aside>
         {% endif %}
 
@@ -77,5 +84,50 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    {% if session.get('user_id') %}
+    <script>
+    // ── Session Day Reminder (Browser Notifications) ──
+    function requestAndNotify() {
+        fetch('/api/todays-sessions')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.sessions || data.sessions.length === 0) return;
+                // Ask for permission once
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(p => {
+                        if (p === 'granted') fireNotifications(data.sessions);
+                    });
+                } else if (Notification.permission === 'granted') {
+                    fireNotifications(data.sessions);
+                }
+            })
+            .catch(() => {});
+    }
+
+    function fireNotifications(sessions) {
+        sessions.forEach(s => {
+            const time = s.scheduled_at ? s.scheduled_at.slice(11, 16) : 'today';
+            const n = new Notification('📅 Session Reminder — Skillify', {
+                body: `You have a session with ${s.other_name} at ${time}. Click to open.`,
+                icon: '/static/favicon.ico',
+                tag:  'skillify-session-' + s.id,  // prevents duplicate notifications
+            });
+            if (s.meeting_link) {
+                n.onclick = () => { window.open(s.meeting_link, '_blank'); n.close(); };
+            } else {
+                n.onclick = () => { window.open('/sessions-dashboard', '_blank'); n.close(); };
+            }
+        });
+    }
+
+    // Fire once on page load, then every 30 minutes
+    if ('Notification' in window) {
+        requestAndNotify();
+        setInterval(requestAndNotify, 30 * 60 * 1000);
+    }
+    </script>
+    {% endif %}
+
 </body>
 </html>
