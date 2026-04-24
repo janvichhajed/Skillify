@@ -59,11 +59,28 @@
                         {% else %}
                             <select name="category" class="form-select form-select-lg" required>
                                 <option value="" disabled selected>-- Select a category --</option>
-                                <option value="Web Development">Web Development</option>
-                                <option value="Data Science">Data Science</option>
-                                <option value="Design">Design</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Other">Other</option>
+                                <optgroup label="Technical">
+                                    <option value="Development">Development</option>
+                                    <option value="Web Development">Web Development</option>
+                                    <option value="Machine Learning">Machine Learning</option>
+                                    <option value="Data Science">Data Science</option>
+                                    <option value="Cybersecurity">Cybersecurity</option>
+                                    <option value="Blockchain">Blockchain</option>
+                                </optgroup>
+                                <optgroup label="Creative">
+                                    <option value="Design">Design</option>
+                                    <option value="Content Creation">Content Creation</option>
+                                    <option value="Digital Marketing">Digital Marketing</option>
+                                    <option value="Video Editing">Video Editing</option>
+                                </optgroup>
+                                <optgroup label="Product & Business">
+                                    <option value="Product Management">Product Management</option>
+                                    <option value="Public Speaking">Public Speaking</option>
+                                    <option value="Soft Skills">Soft Skills</option>
+                                </optgroup>
+                                <optgroup label="Miscellaneous">
+                                    <option value="Other">Other</option>
+                                </optgroup>
                             </select>
                         {% endif %}
                     </div>

@@ -59,7 +59,7 @@ def dashboard():
             other_id = s["requester_id"] if s["provider_id"] == uid else s["provider_id"]
             try:
                 other = users.find_one({"_id": ObjectId(other_id)})
-                s["other_name"] = other.get("user_name", "Unknown") if other else "Unknown"
+                s["other_name"] = other.get("name", other.get("user_name", "Unknown")) if other else "Unknown"
             except:
                 s["other_name"] = "Unknown"
             all_today.append(s)
@@ -90,7 +90,7 @@ def todays_sessions_api():
             try:
                 other_id = s["requester_id"] if s["provider_id"] == uid else s["provider_id"]
                 other = users.find_one({"_id": ObjectId(other_id)})
-                other_name = other.get("user_name", "Unknown") if other else "Unknown"
+                other_name = other.get("name", other.get("user_name", "Unknown")) if other else "Unknown"
             except:
                 other_name = "Unknown"
             result.append({

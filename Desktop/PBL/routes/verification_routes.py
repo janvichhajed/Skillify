@@ -11,8 +11,8 @@ UPLOAD_FOLDER = "static/uploads/certificates"
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
 
 # Category → type mapping
-TECHNICAL_CATEGORIES = {"Web Development", "Data Science", "Machine Learning", "DevOps",
-                        "Cybersecurity", "Mobile Development"}
+TECHNICAL_CATEGORIES = {"Development", "Data Science", "Machine Learning", 
+                        "Cybersecurity", "Blockchain", "Web Development"}
 CREATIVE_CATEGORIES  = {"Design", "Marketing", "Other"}
 
 def allowed_file(filename):

@@ -79,20 +79,45 @@
 <div class="fade-in mb-5" style="position: sticky; top: 56px; background: var(--bg); padding: 16px 0; z-index: 90;">
     <div class="browse-search">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--t3);"></i>
-        <input type="text" placeholder="Search frameworks, languages, or concepts...">
+        <input type="text" id="skillSearch" placeholder="Search frameworks, languages, or concepts..." onkeyup="filterNetwork()">
     </div>
-    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
-        <div class="filter-chip active">All Frameworks</div>
-        <div class="filter-chip">Development</div>
-        <div class="filter-chip">Design</div>
-        <div class="filter-chip">Product</div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="filter-chip active" id="chipAll" onclick="resetFilters()">All</div>
+        
+        <div style="position: relative;">
+            <select id="categoryFilter" class="filter-chip" style="appearance: none; -webkit-appearance: none; padding-right: 32px; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px;" onchange="handleDropdownFilter(this)">
+                <option value="" selected disabled>Filter by Category</option>
+                <optgroup label="Technical">
+                    <option value="Development">Development</option>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Machine Learning">Machine Learning</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Cybersecurity">Cybersecurity</option>
+                    <option value="Blockchain">Blockchain</option>
+                </optgroup>
+                <optgroup label="Creative">
+                    <option value="Design">Design</option>
+                    <option value="Content Creation">Content Creation</option>
+                    <option value="Digital Marketing">Digital Marketing</option>
+                    <option value="Video Editing">Video Editing</option>
+                </optgroup>
+                <optgroup label="Product & Business">
+                    <option value="Product Management">Product Management</option>
+                    <option value="Public Speaking">Public Speaking</option>
+                    <option value="Soft Skills">Soft Skills</option>
+                </optgroup>
+                <optgroup label="Other">
+                    <option value="Other">Other</option>
+                </optgroup>
+            </select>
+        </div>
     </div>
 </div>
 
-<div class="dash-skills-grid">
+<div class="dash-skills-grid" id="skillsGrid">
     {% if skills %}
         {% for skill in skills %}
-        <div class="card fade-in" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card fade-in skill-card" data-category="{{ skill.category }}" style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                     <div style="width: 38px; height: 38px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--t2);">
@@ -101,8 +126,8 @@
                     <span class="pill pill-neutral">{{ skill.category }}</span>
                 </div>
                 
-                <h3 style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">{{ skill.title }}</h3>
-                <p style="font-size: 12px; color: var(--t2); margin-bottom: 4px; min-height: 36px; line-height: 1.5;">{{ skill.description[:90] }}...</p>
+                <h3 class="skill-title" style="font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px;">{{ skill.title }}</h3>
+                <p class="skill-desc" style="font-size: 12px; color: var(--t2); margin-bottom: 4px; min-height: 36px; line-height: 1.5;">{{ skill.description[:90] }}...</p>
                 
                 <div class="skill-card-action">
                     <!-- Default view -->
@@ -146,4 +171,44 @@
         </div>
     {% endif %}
 </div>
+<script>
+let currentCategory = 'all';
+
+function resetFilters() {
+    currentCategory = 'all';
+    document.getElementById('chipAll').classList.add('active');
+    document.getElementById('categoryFilter').classList.remove('active');
+    document.getElementById('categoryFilter').value = ""; // Reset dropdown
+    filterNetwork();
+}
+
+function handleDropdownFilter(el) {
+    if (el.value) {
+        currentCategory = el.value;
+        document.getElementById('chipAll').classList.remove('active');
+        el.classList.add('active');
+        filterNetwork();
+    }
+}
+
+function filterNetwork() {
+    const query = document.getElementById('skillSearch').value.toLowerCase();
+    const cards = document.querySelectorAll('.skill-card');
+    
+    cards.forEach(card => {
+        const title = card.querySelector('.skill-title').innerText.toLowerCase();
+        const desc  = card.querySelector('.skill-desc').innerText.toLowerCase();
+        const cat   = card.getAttribute('data-category');
+        
+        const matchesSearch = title.includes(query) || desc.includes(query);
+        const matchesCategory = (currentCategory === 'all' || cat === currentCategory);
+        
+        if (matchesSearch && matchesCategory) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 {% endblock %}
